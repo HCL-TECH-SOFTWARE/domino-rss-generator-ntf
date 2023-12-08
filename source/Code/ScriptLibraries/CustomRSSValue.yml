@@ -1,0 +1,49 @@
+---
+class: 512
+flags: 0x2000
+unid: OFBD3C97990C605150-ON0056C861852570ED
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Function ExternalGetValue( viewInfo, columnInfo, nve As NotesViewEntry ) As String
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:2
+      
+      '++LotusScript Development Environment:2:1:ExternalGetValue:1:8
+      Function ExternalGetValue( viewInfo, columnInfo, nve As NotesViewEntry ) As String
+      	'// Modify this function.  Add cases to the Select statement for custom RSS tags.  The tagValue is the key word you typed in the "Feed Definition" form.
+      	'// 	viewInfo As ViewDesign 
+      	'// 	columnInfo As ElementDesign 
+      	Dim sValue$
+      	Select Case columnInfo.keyWord
+      	Case Else
+      		'// uncomment sValue below to help debug your custom code
+      		'// messagebox "goes to server console"
+      		'sValue = "Uncaught key word: " & columnInfo.keyWord
+      	End Select
+      	ExternalGetValue = sValue
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: CustomRSSValue
+    signed: true
+remaining: []

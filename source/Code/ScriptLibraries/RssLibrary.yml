@@ -1,0 +1,343 @@
+---
+class: 512
+flags: 0x2000
+unid: OF3929D2F592B5147E-ON0076688C85257229
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $POID
+    type: time
+    data: "2006-09-20T09:23:22.44-04:00"
+    dst: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Class CGIParser
+      Declare Class DirectoryLookup
+      Declare Function ToRssDate( vDate ) As String
+      Declare Function ToIsoDate( vDate ) As String
+      Declare Function FmtStr( v, iLen% ) As String
+      Declare Function ConvertSlash( sPath$ ) As String
+      Declare Function IsDateObject( v ) As Integer
+      Declare Function IsRFC822Email(sEmail$) As Integer
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'RssLibrary: 
+      
+      
+      '// CGI separators
+      Const D_CGI_Begin$ 	= "&"
+      Const D_CGI_End$ 	= "="
+      
+      '// CGI fields used (can also be URL arguments)
+      Const D_CGI_Folder$ 	= "folder"	'viewname to dump as RSS [default=$Inbox]
+      Const D_CGI_Count$	= "count"	'how many view entries to return [default=30, -1 gets everything]
+      Const D_CGI_Convert$	= "convert"	'convert email to RFC822 [default=no]
+      Const D_CGI_Versit$ = "amp;uid"	' need to use a recognized HTML character due to XML parser error on  "&uid="
+      Const D_CGI_VersitAlt$ = "uid"
+      Const D_CGI_Cache$ = "amp;save"	' need to use a recognized HTML character due to XML parser error on  "&uid="
+      Const D_CGI_CacheAlt$ = "save"
+      
+      '// Miscellaneous
+      Const kRSSDescription%	= 0
+      Const kRSSAuthor%	= 1
+      Const kRSSPubDate%	= 2
+      Const kRSSLink%	= 3
+      Const kDataLast% = 14
+      
+      Const kFieldInternetAddress$ 	= "InternetAddress"
+      Const kFieldMailAddress$ 	= "MailAddress"
+      Const kFieldPrincipal$		= "Principal"
+      Const kFieldReplyTo$		= "ReplyTo"
+      Const kFieldFrom$		= "From"
+      Const kFieldFullName$		= "FullName"
+      
+      Const kRssDateFormat$	= "ddd, dd mmm yyyy hh:nn:ss"
+      Const kRssEnd$		= " GMT"
+      Const kIsoDateFormat$	= "yyyymmddThhnnss"
+      Const kIsoEnd$		= "Z"
+      
+      Const kSlash$		= "/"
+      Const kProtocol$	= "://"
+      
+      Const kSortDescending%	= -1
+      Const kSortAscending%	= 1
+      Const kSortNone%	= 0
+      
+      Const kTagOpen$ = "<"
+      Const kTagClose$ = ">"
+      
+      
+      Class CGIParser
+      	'// Properties (private by default)
+      	m_q As String
+      	m_host As String
+      	m_port As String
+      	m_protocol As String
+      	m_ctx As NotesDocument
+      	
+      	'// Methods (public by default)
+      	Sub New( docCtx As NotesDocument )
+      		Set m_ctx = docCtx
+      		m_q = Lcase(docCtx.GetItemValue("Query_String_Decoded")(0))
+      		m_port = "-1"
+      	End Sub
+      	Function GetCGI(sVar$) As String
+      		Dim sRtn$
+      		'// if an item of the name "sVar" is passed, then use it first
+      		'//  (form items take precedence over URL arguments)
+      		If (Me.m_ctx.HasItem(sVar)) Then
+      			sRtn = Me.m_ctx.GetItemValue(sVar)(0)
+      		Else
+      			sRtn = Me.GetQueryParam(sVar)
+      		End If
+      		GetCGI = sRtn
+      	End Function
+      	Function GetQueryParam(sVar$) As String
+      		Dim sRtn$, sTmp$, i%
+      		If (Len(Me.m_q)>1) Then
+      			sTmp = D_CGI_Begin & sVar & D_CGI_End
+      			i = Instr(Me.m_q, sTmp)
+      			If (i > 0) Then
+      				'// strip value from name=value pair
+      				sRtn = Mid(Me.m_q, i + Len(sTmp))
+      				i = Instr(sRtn,D_CGI_Begin)
+      				If (i>0) Then
+      					sRtn = Left(sRtn,i-1)
+      				End If
+      			End If
+      		End If
+      		GetQueryParam = sRtn
+      	End Function
+      	
+      	Function GetPort() As String
+      		If ("-1"=Me.m_port) Then
+      			Me.m_port = ":" & Lcase(Me.m_ctx.GetItemValue("Server_Port")(0))
+      			If (":"=Me.m_port) Then
+      				Me.m_port=""
+      			End If
+      		End If
+      		GetPort = Me.m_port
+      	End Function
+      	
+      	Function GetHostName() As String
+      		If (""=Me.m_host) Then
+      			Me.m_host = Lcase(Me.m_ctx.GetItemValue("Server_Name")(0))
+      		End If
+      		GetHostName = Me.m_host
+      	End Function
+      	
+      	Function GetProtocol() As String
+      		If (""=Me.m_protocol) Then
+      			Me.m_protocol = Left(Lcase(Me.m_ctx.GetItemValue("Server_Protocol")(0)), 5)
+      			If ("https"<>Me.m_protocol) Then
+      				Me.m_protocol = "http"
+      			End If
+      		End If
+      		GetProtocol = Me.m_protocol
+      	End Function
+      	Function GetURL() As String
+      		GetURL = Me.m_ctx.GetItemValue("Path_Info")(0)
+      	End Function
+      End Class
+      
+      Class DirectoryLookup
+      	'// Properties (private by default)
+      	m_nabs() As Variant
+      	m_views() As Variant
+      	
+      	'// Methods (public by default)
+      	Sub New( ns As NotesSession )
+      		Call Me.OpenUserViews(ns)
+      	End Sub
+      	
+      	Function GetFirstEntry( sName$ ) As Variant
+      		Dim nve As NotesViewEntry
+      		Set nve = Nothing
+      		Forall nv In Me.m_views
+      			If Not (nv Is Nothing) Then
+      				Set nve = nv.GetEntryByKey( sName )
+      				If Not (nve Is Nothing) Then
+      					Exit Forall
+      				End If
+      			End If
+      		End Forall
+      		Set GetFirstEntry = nve
+      	End Function
+      	
+      	Function GetRFC822Email( sName$ ) As String
+      		Dim uve As NotesViewEntry
+      		Dim sEmail$
+      		If (Instr(sName, "@")>0) Then
+      				'// strip domain info
+      			sName = Strleft( sName, "@" )
+      		End If
+      		Set uve = Me.GetFirstEntry( Lcase(sName) )
+      		If Not (uve Is Nothing) Then
+      			'// InternetAddress Field
+      			sEmail = uve.ColumnValues(16)
+      			If (False=IsRFC822Email(sEmail)) Then
+      				sEmail = ""
+      			End If
+      			If (""=sEmail) Then
+      				'// MailAddress Field
+      				sEmail = uve.ColumnValues(8)
+      				If (False=IsRFC822Email(sEmail)) Then
+      					sEmail = ""
+      				End If
+      			End If
+      		End If
+      		GetRFC822Email = sEmail
+      	End Function
+      	
+      	Function GetUserDatabase( sName$ ) As Variant
+      		Dim nve As NotesViewEntry
+      		Dim ndb As NotesDatabase
+      		Dim sDbPath$
+      		On Error Resume Next
+      		
+      		Set ndb = Nothing
+      		Set nve = Me.GetFirstEntry( sName )
+      		If Not (nve Is Nothing) Then
+      			'// Set mail database info
+      			Set ndb = New NotesDatabase(nve.ColumnValues(5),nve.ColumnValues(6))
+      			If (ndb Is Nothing) Then
+      				Exit Function
+      			End If
+      			If (False=ndb.IsOpen) Then
+      				Call ndb.Open("","")
+      			End If
+      		End If
+      		Set GetUserDatabase = ndb
+      	End Function
+      	
+      	Private Sub OpenUserViews( ns As NotesSession )
+      		Dim iEntry%, h%
+      		Forall ndb In ns.AddressBooks
+      			iEntry = 1 + iEntry
+      		End Forall
+      		
+      		Redim Me.m_nabs(1 To iEntry)
+      		Redim Me.m_views(1 To iEntry)
+      		iEntry = 1
+      		Forall ndb In ns.AddressBooks
+      			If (False=ndb.IsOpen) Then
+      				Call ndb.Open("","")
+      			End If
+      			
+      			If (True=ndb.IsOpen) Then
+      				Set Me.m_nabs(iEntry) = ndb
+      				Set Me.m_views(iEntry) = Me.m_nabs(iEntry).GetView("$Users")
+      			Else
+      				Set Me.m_views(iEntry) = Nothing
+      			End If
+      			iEntry = 1 + iEntry
+      		End Forall
+      	End Sub
+      End Class
+      
+      
+      '++LotusScript Development Environment:2:1:ToRssDate:1:8
+      Function ToRssDate( vDate ) As String
+      	'** convert date text into ISO date text
+      	Dim ndt As NotesDateTime
+      	On Error Resume Next
+      	
+      	If (""<>Cstr(vDate)) Then
+      		If( False=Isscalar(vDate) ) Then
+      			Set ndt = New NotesDateTime(vDate(0))
+      		Else
+      			Set ndt = New NotesDateTime(vDate)
+      		End If
+      		ToRssDate = Format$(ndt.LSGMTTime, kRssDateFormat) & kRssEnd
+      	Else
+      		ToRssDate = ""
+      	End If
+      End Function
+      '++LotusScript Development Environment:2:1:ToIsoDate:1:8
+      Function ToIsoDate( vDate ) As String
+      	'** convert date text into ISO date text
+      	Dim ndt As NotesDateTime
+      	On Error Resume Next
+      	
+      	If( False=Isscalar(vDate) ) Then
+      		Set ndt = New NotesDateTime(vDate(0))
+      	Else
+      		Set ndt = New NotesDateTime(vDate)
+      	End If
+      	ToIsoDate = Format$(ndt.LSGMTTime, kIsoDateFormat) & kIsoEnd
+      End Function
+      '++LotusScript Development Environment:2:1:FmtStr:1:8
+      Function FmtStr( v, iLen% ) As String
+      	Dim sRtn$
+      	sRtn = "0000000000" & Cstr(v)
+      	FmtStr = Right(sRtn, iLen)
+      End Function
+      '++LotusScript Development Environment:2:1:ConvertSlash:1:8
+      Function ConvertSlash( sPath$ ) As String
+      	Dim i%
+      	i = Instr(sPath, "\")
+      	Do Until i<1
+      		Mid(sPath,i,1)=kSlash
+      		i = Instr(sPath, "\")
+      	Loop
+      	ConvertSlash = sPath
+      End Function
+      '++LotusScript Development Environment:2:1:IsDateObject:1:8
+      Function IsDateObject( v ) As Integer
+      	Dim iRtn%
+      	On Error Goto Error_IsDate
+      	iRtn = False
+      	If( False=Isscalar(v) ) Then
+      		iRtn = Isdate( v(0) )
+      	Else
+      		iRtn = Isdate( v )
+      	End If
+      	
+      Exit_IsDate:
+      	IsDateObject = iRtn
+      	Exit Function
+      Error_IsDate:
+      	Resume Exit_IsDate
+      End Function
+      '++LotusScript Development Environment:2:1:IsRFC822Email:1:8
+      Function IsRFC822Email(sEmail$) As Integer
+      	Dim bValid%, iCharAt%, iCharDot%
+      	'** Check format ... must be RFC-822
+      	bValid = True
+      	If (True=Isempty(sEmail)) Or (Len(sEmail)<2) Then
+      		bValid = False
+      	Else
+      		iCharAt = Instr(sEmail,"@")
+      		If (iCharAt < 2) Then
+      			bValid = False
+      		Else
+      			iCharDot = Instr(sEmail,".")
+      			If (iCharDot < iCharAt) Then
+      				bValid = False
+      			End If
+      		End If
+      	End If
+      	IsRFC822Email = bValid
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: RssLibrary
+    signed: true
+remaining: []

@@ -1,0 +1,35 @@
+---
+class: 4
+flags: 0x0000
+unid: OF0495CACF9CBEAAAC-ON00703353852570EE
+items:
+  - name: $Comment
+    type: text
+    data: ""
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "7"
+    signed: true
+  - name: $Flags
+    type: text
+    data: "#34CQnw"
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $TITLE
+    type: text
+    data: FramesetMain
+    signed: true
+  - name: $FrameSet
+    signed: true
+    nonsummary: true
+    type: opaque
+    type_num: 1
+    opaque: |
+      7/8YAAIAAgAAAAAAAAAAAAAAAAAAAAAA8P86AEUAAAABAAAAAAAFAAUAAAAAAAUAAAAAAAUAAAAAAAEA
+      AQAAAAAAAQDAwMAAAAADAAEAAwABAPH/UQABAAAAAEABAAMAAQABAAAAAAANAAAAEAABAMDAwAAAAEZy
+      YW1lRmVlZFZpZXdGcmFtZUZlZWRQcmV2aWV3AQD///8AAQAACgEAAAAAAD/2/ykAAAAAAAMAAgAHAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAQnlPcmRlcj8=
+remaining: []

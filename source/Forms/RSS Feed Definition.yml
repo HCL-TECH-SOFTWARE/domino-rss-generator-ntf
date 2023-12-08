@@ -1,0 +1,2059 @@
+---
+class: 32772
+flags: 0x0000
+unid: OF7DE6C9D9E45DCF90-ON00513F63852570EB
+items:
+  - name: $$ScriptName
+    type: text
+    data: FeedDefinition
+    signed: true
+    nonsummary: true
+  - name: $DesignerVersion
+    type: text
+    data: "7"
+    signed: true
+  - name: $Fields
+    type: text
+    data:
+      - entryChoice
+      - databaseChoices
+      - additionalFeedTags
+      - listInfo
+      - orderedList
+      - tagLibraries
+      - convertNameToEmail
+      - entryPicker
+      - optionalViewItems
+      - encoding
+      - rssLanguage
+      - rssDescription
+      - rssTitle
+      - viewSelection
+      - databaseSelection
+      - DatabaseChoiceDisp
+      - databaseChoice
+      - currentTagName
+      - viewColumnChoices
+      - dialogReturn
+      - Order
+      - nodeValue_3
+      - tagAttr_3
+      - tagName_3
+      - Other_2
+      - nodeValue_2
+      - tagAttr_2
+      - tagName_2
+      - Other_1
+      - nodeValue_1
+      - tagAttr_1
+      - tagName_1
+      - Other_0
+      - nodeValue_0
+      - tagAttr_0
+      - tagName_0
+      - tagTypeDisp_14
+      - tagValueDisp_14
+      - tagType_14
+      - tagValue_14
+      - nodeValue_14
+      - tagAttr_14
+      - tagName_14
+      - Other_14
+      - tagTypeDisp_13
+      - tagValueDisp_13
+      - tagType_13
+      - tagValue_13
+      - nodeValue_13
+      - tagAttr_13
+      - tagName_13
+      - Other_13
+      - tagTypeDisp_12
+      - tagValueDisp_12
+      - tagType_12
+      - tagValue_12
+      - nodeValue_12
+      - tagAttr_12
+      - tagName_12
+      - Other_12
+      - tagTypeDisp_11
+      - tagValueDisp_11
+      - tagType_11
+      - tagValue_11
+      - nodeValue_11
+      - tagAttr_11
+      - tagName_11
+      - Other_11
+      - tagTypeDisp_10
+      - tagValueDisp_10
+      - tagType_10
+      - tagValue_10
+      - nodeValue_10
+      - tagAttr_10
+      - tagName_10
+      - Other_10
+      - tagTypeDisp_9
+      - tagValueDisp_9
+      - tagType_9
+      - tagValue_9
+      - nodeValue_9
+      - tagAttr_9
+      - tagName_9
+      - Other_9
+      - tagTypeDisp_8
+      - tagValueDisp_8
+      - tagType_8
+      - tagValue_8
+      - nodeValue_8
+      - tagAttr_8
+      - tagName_8
+      - Other_8
+      - tagTypeDisp_7
+      - tagValueDisp_7
+      - tagType_7
+      - tagValue_7
+      - nodeValue_7
+      - tagAttr_7
+      - tagName_7
+      - Other_7
+      - tagTypeDisp_6
+      - tagValueDisp_6
+      - tagType_6
+      - tagValue_6
+      - nodeValue_6
+      - tagAttr_6
+      - tagName_6
+      - Other_6
+      - tagTypeDisp_5
+      - tagValueDisp_5
+      - tagType_5
+      - tagValue_5
+      - nodeValue_5
+      - tagAttr_5
+      - tagName_5
+      - Other_5
+      - tagTypeDisp_4
+      - tagValueDisp_4
+      - tagType_4
+      - tagValue_4
+      - nodeValue_4
+      - tagAttr_4
+      - tagName_4
+      - Other_4
+      - tagType_3
+      - tagValue_3
+      - Other_3
+      - tagType_2
+      - tagValue_2
+      - tagType_1
+      - tagValue_1
+      - tagType_0
+      - tagValue_0
+      - Authors
+  - name: $Flags
+    type: text
+    data: "1"
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $Script
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:2
+    signed: true
+    nonsummary: true
+  - name: $SubForm_RepIDs
+    type: text
+    data:
+      - "0000000000000000"
+      - "0000000000000000"
+    signed: true
+  - name: $SubForms
+    type: text
+    data:
+      - FeedDefinitionViewDescription
+      - FeedDefinitionViewEntryDescription
+    signed: true
+  - name: $TITLE
+    type: text
+    data:
+      - RSS Feed Definition
+      - FeedDefinition
+  - name: $WindowTitle
+    type: formula
+    data: "@If( @IsNewDoc;\"New RSS Feed Definition\"; rssTitle )"
+    opaque: |
+      UAAAAEAAiQCvADYAIgABABcATmV3IFJTUyBGZWVkIERlZmluaXRpb24ArgAUAAUACAByc3NUaXRsZa4A
+      BAC1AwMABwAOAAcACTJTNlM3UwA=
+    signed: true
+    nonsummary: true
+  - name: Authors
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: DatabaseChoiceDisp
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Order
+    type: number
+    data: 0
+    signed: true
+    nonsummary: true
+  - name: OriginalModTime
+    type: time
+    data: "2006-11-27T15:31:56.81-05:00"
+    signed: true
+  - name: Other_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: Other_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: additionalFeedTags
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: convertNameToEmail
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: currentTagName
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: databaseChoice
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: databaseChoices
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: databaseSelection
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: dialogReturn
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: encoding
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: entryChoice
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: entryPicker
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: listInfo
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: nodeValue_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: optionalViewItems
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: orderedList
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: rssDescription
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: rssLanguage
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: rssTitle
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagAttr_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagLibraries
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagName_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagTypeDisp_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagType_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValueDisp_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_0
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_1
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_10
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_11
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_12
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_13
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_14
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_2
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_3
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_4
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_5
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_6
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_7
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_8
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: tagValue_9
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: viewColumnChoices
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: viewSelection
+    type: iou
+    type_num: 0
+    nonsummary: true
+    ph: true
+  - name: $ACTIONS
+    type: composite
+    signed: true
+    nonsummary: true
+    data:
+      - type: 0x00bd
+        BackColor: 216
+        BorderStyle: 1
+        BorderWidth: 0
+        BtnHeight: 8
+        FontID: 0x00000000
+        HeightSpc: 2
+        LineColor: 0
+        LineStyle: 1
+        ShareID: 0x00000000
+        dwFlags: 0x00000001
+      - type: 0x0059
+        opaque: WSABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AABOfA==
+        title: Categori_ze
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAADCg==
+        title: _Send Document
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAAECg==
+        title: _Forward
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA9fA==
+        title: _Move To Folder...
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA+fA==
+        title: _Remove From Folder
+      - type: 0x0059
+        opaque: WSABAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019f
+        IconIndex: 10
+        ShareId: 0
+        Type: 1
+        data: "@Command([FileSave]);@Command([FileCloseWindow])"
+        data_opaque: |
+          PgAIABIAAgDGCwAAAAAAAO0BAwAHAAwABQAJMFMwRQAAABIAAgD8EQAAAAAAAO0BAwAHAAwABQAJMFMw
+          RQA=
+        title: Save & Exit
+      - type: 0xffbe
+        Flags: 0x0000019e
+        IconIndex: 5
+        ShareId: 0
+        Type: 5
+        opaque: AgACCg==
+        title: _Edit Document
+      - type: 0xffbe
+        Flags: 0x0000019e
+        IconIndex: 11
+        ShareId: 0
+        Type: 1
+        data: "@Command([FileCloseWindow])"
+        data_opaque: IAAAABIAAgD8EQAAAAAAAO0BAwAHAAwABQAJMFMwRQA=
+        title: Cancel
+      - type: 0xffbe
+        Flags: 0x0000019f
+        IconIndex: 41
+        ShareId: 0
+        Type: 1
+        data: "@Command([ToolsRunMacro]; \"(GlobalOptions)\")"
+        data_opaque: MgAAACYAAgCiDwAAAAAAAAEADwAoR2xvYmFsT3B0aW9ucykA7QIDAAcACgADAAk0UwA=
+        title: Set Global Options
+  - name: $Body
+    type: composite
+    signed: true
+    nonsummary: true
+    data:
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1440
+        Flags: 0x0100
+        Flags2: 0x8794
+        JustifyMode: 0
+        LeftMargin: 1440
+        LineSpacing: 0
+        PABID: 1
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 1
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x2010105
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xffffff
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 1
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x2010105
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xffffff
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff8a
+        Version: 0
+      - type: 0xfffe
+        opaque: |
+          /v9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          AAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xff8a
+        opaque: iv82AIUAAQUCIAIAAAAAAAACBQEBBwoAAAAAAAAABwAAAAAACgAAAAgA9AADAEF1dGhvcnMA
+      - type: 0x00de
+        Signature: 0xff8a
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x2010105
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xffffff
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1080
+        Flags: 0x0100
+        Flags2: 0x8414
+        JustifyMode: 0
+        LeftMargin: 1080
+        LineSpacing: 0
+        PABID: 2
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 1080
+          - 0
+          - 1080
+          - 10
+          - 0
+          - 100
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 2
+      - type: 0x00dd
+        Signature: 0xfffb
+        Version: 1
+      - type: 0xfffb
+        opaque: +/8sAGEAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAMDAwAAAAAAAAAA=
+      - type: 0xff5c
+        opaque: |
+          XP8+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAQAACgAAAAABAAAA
+          AAA=
+      - type: 0x00de
+        Signature: 0xfffb
+        Version: 1
+      - type: 0x00a3
+        opaque: ow44BCgAPAAAAAAACwA=
+      - type: 0x00a4
+        opaque: pBIAADgEcESAcFUDEREBAdkA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1125
+        Flags: 0x0186
+        Flags2: 0x8754
+        JustifyMode: 3
+        LeftMargin: 1125
+        LineSpacing: 0
+        PABID: 3
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 17520
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 3
+      - type: 0xff85
+        FontID: 0xa000101
+        data: RSS Fe
+      - type: 0xff85
+        FontID: 0xa000101
+        data: ed Generator
+      - type: 0x00d3
+        opaque: 0wgBAJ+f4AA=
+      - type: 0x00a5
+        opaque: pQYAAAAA
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 1
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1440
+        Flags: 0x0100
+        Flags2: 0x8594
+        JustifyMode: 0
+        LeftMargin: 1440
+        LineSpacing: 0
+        PABID: 4
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 1440
+          - 10
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 4
+      - type: 0x00dd
+        Signature: 0xfffb
+        Version: 1
+      - type: 0xfffb
+        opaque: +/8sACEAAAACAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAP///wAAAAAAAAA=
+      - type: 0xff5c
+        opaque: |
+          XP8+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAQAACgAAAAABAAAA
+          AAA=
+      - type: 0x00de
+        Signature: 0xfffb
+        Version: 1
+      - type: 0x00a3
+        opaque: ow6gBSgAPAAdAAAACwA=
+      - type: 0x00a4
+        opaque: pBIAAL0F60KAcBUDEQEBAQEA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1514
+        Flags: 0x0186
+        Flags2: 0x8754
+        JustifyMode: 3
+        LeftMargin: 1514
+        LineSpacing: 0
+        PABID: 5
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 17131
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 5
+      - type: 0xff85
+        FontID: 0xa000101
+        data: View  Properties for RSS Feed
+      - type: 0x00d3
+        opaque: 0wgBAP///wA=
+      - type: 0x00a4
+        opaque: pBIBAL0F60KAcEUDERABAQEA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1514
+        Flags: 0x0186
+        Flags2: 0x8754
+        JustifyMode: 0
+        LeftMargin: 1514
+        LineSpacing: 0
+        PABID: 6
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 17131
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 6
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 6
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xffad
+        Version: 0
+      - type: 0xff71
+        opaque: |
+          cf8/AAAAAAADABgAHQAAAAAAAAAAAAAAAAAAAAAAAAAAAEZlZWREZWZpbml0aW9uVmlld0Rlc2NyaXB0
+          aW9u
+      - type: 0xff7e
+        opaque: fv8qAA4ACAAAAB4ARmVlZERlZmluaXRpb25WaWV3RGVzY3JpcHRpb24A
+      - type: 0x007f
+        opaque: fwI=
+      - type: 0x00de
+        Signature: 0x00ae
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 6
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00d3
+        opaque: 0wgBAP///wA=
+      - type: 0x00a5
+        opaque: pQYAAAAA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1440
+        Flags: 0x0900
+        Flags2: 0x8794
+        JustifyMode: 0
+        LeftMargin: 1440
+        LineSpacing: 0
+        PABID: 7
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0xffbb
+        PABID: 0x0007
+        Reserverd: EwDizuxhFAA=
+        data: "@If( \"\"=viewSelection; @True; @False )"
+      - type: 0x0083
+        PABID: 7
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1440
+        Flags: 0x0900
+        Flags2: 0x8594
+        JustifyMode: 0
+        LeftMargin: 1440
+        LineSpacing: 0
+        PABID: 8
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 1440
+          - 11
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0xffbb
+        PABID: 0x0008
+        Reserverd: EwDizuxhFAA=
+        data: "@If( \"0\"=databaseChoice; @True; @False )"
+      - type: 0x0083
+        PABID: 8
+      - type: 0x00dd
+        Signature: 0xfffb
+        Version: 1
+      - type: 0xfffb
+        opaque: +/8sACEAAAACAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAP///wAAAAAAAAA=
+      - type: 0xff5c
+        opaque: |
+          XP8+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAQAACgAAAAABAAAA
+          AAA=
+      - type: 0x00de
+        Signature: 0xfffb
+        Version: 1
+      - type: 0x00a3
+        opaque: ow6gBSgAPAAdAAAACwA=
+      - type: 0x00a4
+        opaque: pBIAAL0F60KAcBUDEQEBAQEA
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 5
+      - type: 0xff85
+        FontID: 0xa000101
+        data: View Entry Properties For RSS Item(s)
+      - type: 0x00d3
+        opaque: 0wgBAP///wA=
+      - type: 0x00a4
+        opaque: pBIBAL0F60KAcEUDERABAQEA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1514
+        Flags: 0x0986
+        Flags2: 0x8754
+        JustifyMode: 0
+        LeftMargin: 1514
+        LineSpacing: 0
+        PABID: 9
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 17131
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0x0083
+        PABID: 9
+      - type: 0x00bc
+        opaque: vAYHAAkA
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 9
+      - type: 0x00bc
+        opaque: vAYHAAkA
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xffad
+        Version: 0
+      - type: 0xff71
+        opaque: |
+          cf9EAAAAAAADABgAIgAAAAAAAAAAAAAAAAAAAAAAAAAAAEZlZWREZWZpbml0aW9uVmlld0VudHJ5RGVz
+          Y3JpcHRpb24=
+      - type: 0xff7e
+        opaque: fv8vAA4ACAAAACMARmVlZERlZmluaXRpb25WaWV3RW50cnlEZXNjcmlwdGlvbgA=
+      - type: 0x007f
+        opaque: fwI=
+      - type: 0x00de
+        Signature: 0x00ae
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 9
+      - type: 0x00bc
+        opaque: vAYHAAkA
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0xa810001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xe12000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00d3
+        opaque: 0wgBAP///wA=
+      - type: 0x00a5
+        opaque: pQYAAAAA
+      - type: 0x0081
+      - type: 0xff82
+        FirstLineLeftMargin: 1440
+        Flags: 0x0900
+        Flags2: 0x8794
+        JustifyMode: 0
+        LeftMargin: 1440
+        LineSpacing: 0
+        PABID: 10
+        ParagraphSpacingAfter: 0
+        ParagraphSpacingBefore: 0
+        RightMargin: 0
+        Tab:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+        TabTypes: 0x00000000
+        Tabs: 0
+        data:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0x00000001
+          - 0x00000004
+      - type: 0xffbb
+        PABID: 0x000a
+        Reserverd: EwDizuxhFAA=
+        data: "@True"
+      - type: 0x0083
+        PABID: 10
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff8a
+        Version: 0
+      - type: 0xfffe
+        opaque: |
+          /v9UAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          AAAAAAAAAAAAAAAAAAAAAAAAAAAuLCQA
+      - type: 0xff8a
+        opaque: iv88AIoAAAMAMAABAAAAAAACAQACCBIAAAAAAAAABQAAAAAAEgAAABAAAAAAAAAAAEB/QAMAT3JkZXIA
+      - type: 0x00de
+        Signature: 0xff8a
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 10
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff8a
+        Version: 0
+      - type: 0xfffe
+        opaque: |
+          /v9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          AAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xff8a
+        opaque: iv8wAIoAAAUAMAIAAAAAAAACAQACCAAAAAAAAAAADAAAAAAAZGlhbG9nUmV0dXJu
+      - type: 0x00de
+        Signature: 0xff8a
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff8a
+        Version: 0
+      - type: 0xfffe
+        opaque: |
+          /v9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          AAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xff8a
+        opaque: iv82AIIAAQUGMAIAAAAAAAACAQACCAAAAAAAAAAAEQAAAAAAdmlld0NvbHVtbkNob2ljZXMA
+      - type: 0x00de
+        Signature: 0xff8a
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff8a
+        Version: 0
+      - type: 0xfffe
+        opaque: |
+          /v9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          AAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xff8a
+        opaque: iv8yAIoAAAUAAAIAAAAAAAACAQACCAAAAAAAAAAADgAAAAAAY3VycmVudFRhZ05hbWU=
+      - type: 0x00de
+        Signature: 0xff8a
+        Version: 0
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+      - type: 0x0081
+      - type: 0x0083
+        PABID: 10
+      - type: 0x00dd
+        Signature: 0xff85
+        Version: 0
+      - type: 0xff85
+        FontID: 0x8020001
+      - type: 0x00d2
+        Color:
+          Flags: 0x0001
+          rgb: 0xff0000
+      - type: 0x00de
+        Signature: 0xff85
+        Version: 0
+  - name: $Fonts
+    nonsummary: true
+    type: opaque
+    type_num: 1
+    opaque: i/8oAAEABSJTbWFsbCBGb250cwAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+  - name: $HTMLCode
+    signed: true
+    nonsummary: true
+    type: opaque
+    type_num: 1
+    opaque: X/8QAAIADwAHAAAAAAAAAA==
+  - name: $Info
+    signed: true
+    nonsummary: true
+    type: opaque
+    type_num: 1
+    opaque: hhgBAIAAAAAAgAAAAQABAP///wAQAAAA
+  - name: $V5ACTIONS
+    type: composite
+    signed: true
+    nonsummary: true
+    data:
+      - type: 0x00bd
+        BackColor: 216
+        BorderStyle: 1
+        BorderWidth: 0
+        BtnHeight: 8
+        FontID: 0x00000000
+        HeightSpc: 2
+        LineColor: 0
+        LineStyle: 1
+        ShareID: 0x00000000
+        dwFlags: 0x00000001
+      - type: 0xff79
+        BackColor:
+          Flags: 0x0001
+          rgb: 0xb1b1d2
+        BtnBorderDisplay: 0
+        BtnTextJustify: 0
+        BtnWidthStyle: 0
+        ButtonColor:
+          Flags: 0x0001
+          rgb: 0xb1b1d2
+        FontColor:
+          Flags: 0x0009
+          rgb: 0x000000
+        LineColor:
+          Flags: 0x0001
+          rgb: 0x000000
+        Spare:
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+        barFontID: 0x00000000
+        barHeight:
+          Flags: 0x0000
+          Length:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+          Reserved: 0
+          Units: 0
+        dwFlags: 0x00000003
+        wAppletHeight: 31
+        wBarBackgroundRepeat: 0
+        wBtnInternalMargin: 0
+        wBtnWidthAbsolute: 0
+        wSpare: 0x0000
+        wThemeSetting: 0
+      - type: 0xfffc
+        BorderFlags: 0
+        BorderStyle: 1
+        BorderWidthBottom: 1
+        BorderWidthLeft: 0
+        BorderWidthRight: 0
+        BorderWidthTop: 0
+        Color:
+          Flags: 0x0001
+          rgb: 0x000000
+        DropShadowWidth: 0
+        Flags: 0x00000000
+        InnerWidthBottom: 0
+        InnerWidthLeft: 0
+        InnerWidthRight: 0
+        InnerWidthTop: 0
+        OuterWidthBottom: 0
+        OuterWidthLeft: 0
+        OuterWidthRight: 0
+        OuterWidthTop: 0
+        dwSpare: 0x00000000
+        wSpares:
+          - 0x0000
+          - 0x0000
+          - 0x0000
+          - 0x0000
+          - 0x0000
+      - type: 0x0059
+        opaque: WSABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AABOfA==
+        title: Categori_ze
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAADCg==
+        title: _Send Document
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAAECg==
+        title: _Forward
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA9fA==
+        title: _Move To Folder...
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA+fA==
+        title: _Remove From Folder
+      - type: 0x0059
+        opaque: WSABAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019f
+        IconIndex: 10
+        ShareId: 0
+        Type: 1
+        data: "@Command([FileSave]);@Command([FileCloseWindow])"
+        data_opaque: |
+          PgAIABIAAgDGCwAAAAAAAO0BAwAHAAwABQAJMFMwRQAAABIAAgD8EQAAAAAAAO0BAwAHAAwABQAJMFMw
+          RQA=
+        title: Save & Exit
+      - type: 0xffbe
+        Flags: 0x0000019e
+        IconIndex: 5
+        ShareId: 0
+        Type: 5
+        opaque: AgACCg==
+        title: _Edit Document
+      - type: 0xff5e
+        opaque: Xv8sAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAOAAEABABFZGl0AwA=
+      - type: 0xffbe
+        Flags: 0x0000019e
+        IconIndex: 11
+        ShareId: 0
+        Type: 1
+        data: "@Command([FileCloseWindow])"
+        data_opaque: IAAAABIAAgD8EQAAAAAAAO0BAwAHAAwABQAJMFMwRQA=
+        title: Cancel
+      - type: 0xffbe
+        Flags: 0x0000019f
+        IconIndex: 41
+        ShareId: 0
+        Type: 1
+        data: "@Command([ToolsRunMacro]; \"(GlobalOptions)\")"
+        data_opaque: MgAAACYAAgCiDwAAAAAAAAEADwAoR2xvYmFsT3B0aW9ucykA7QIDAAcACgADAAk0UwA=
+        title: Set Global Options
+remaining: []

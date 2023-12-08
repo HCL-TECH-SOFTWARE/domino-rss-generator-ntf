@@ -1,0 +1,28 @@
+---
+class: 4
+flags: 0x0000
+unid: OFF81E9A6A6C9BC2DE-ON0050FC6E85257AA7
+items:
+  - name: $DesignerVersion
+    type: text
+    data: 8.5.4
+    signed: true
+  - name: $FileNames
+    type: text
+    data: ".classpath"
+    signed: true
+  - name: $Flags
+    type: text
+    data: ~C4g
+  - name: $Revisions
+    type: time
+    data: "2012-10-30T10:44:35.10-04:00"
+    dst: true
+  - name: $TITLE
+    type: text
+    data: ".classpath"
+  - name: $FileData
+    type: composite
+    signed: true
+    nonsummary: true
+remaining: []

@@ -1,0 +1,235 @@
+---
+class: 512
+flags: 0x0000
+unid: OFCCD55E9B3212ECE4-ON0071BA0585257229
+items:
+  - name: $AssistAction
+    type: action
+    code_type: 65413
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      Use "RssLibrary"
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Sub Initialize
+      Declare Sub DumpHTML (ns As NotesSession, nv As NotesView, URLPrefix$ )
+      Declare Function GetWebDbPath( sUrl$ ) As String
+      Declare Function GetBodyHeading() As String
+      Declare Function GetURLPrefix ( nd As NotesDocument ) As String
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      '// Localized strings
+      Const L_For$	= " for "
+      
+      '// Do not translate
+      Const kAgentName$ = "rss"
+      Const kThisAgentName$ = "availablefeeds"
+      
+      Dim thisDb As NotesDatabase
+      Dim prefDoc As NotesDocument
+      
+      '++LotusScript Development Environment:2:2:Initialize:1:10
+      Sub Initialize
+      	Dim ns As New NotesSession
+      	Set thisDb = ns.CurrentDatabase
+      	Set prefDoc = thisDb.GetProfileDocument("globaloptions")
+      	
+      	Call DumpHTML( ns, thisDb.GetView( "ByOrder" ), GetURLPrefix(ns.DocumentContext) )
+      End Sub
+      
+      
+      '++LotusScript Development Environment:2:2:DumpHTML:1:8
+      Sub DumpHTML (ns As NotesSession, nv As NotesView, URLPrefix$ )
+      	Dim nvc As NotesViewEntryCollection
+      	Dim nve As NotesViewEntry
+      	Dim nCnt%, bFilterForUser%
+      	Dim vh() As String
+      	Dim url$, sFeedTitle$, sHeading$
+      	Dim nn As New NotesName(ns.EffectiveUserName)
+      	
+      	'// Setup HTTP Output
+      	Print |Content-Type: text/html|
+      	Print |<html><head>|
+      	
+      	'// Get the ordered list of feeds
+      	Set nvc = nv.AllEntries
+      	Redim vh(1 To nvc.Count) As String
+      	nCnt = 1
+      	
+      	'// Filter out user-based feeds?
+      	If ("Anonymous"=ns.EffectiveUserName) Then
+      		bFilterForUser = True
+      	End If
+      	
+      	'// Loop thru entries
+      	Set nve = nvc.GetFirstEntry
+      	Do Until nve Is Nothing
+      		If Not ((True=bFilterForUser) And ("1"=nve.ColumnValues(3))) Then
+      			url = URLPrefix & nve.UniversalID
+      			
+      			If ("1"=nve.ColumnValues(3)) Then
+      				sFeedTitle = nve.ColumnValues(1) & L_For & nn.Common
+      			Else
+      				sFeedTitle = nve.ColumnValues(1)
+      			End If
+      			
+      			'// Output the <link> which is picked up by the RSS feed reader
+      			Print |<link rel="alternate" type="application/rss+xml" href="| & url & |" title="| & sFeedTitle & |" />|
+      			
+      			'// Build the hotspot HTML
+      			vh( nCnt ) = 	|<li class="feed-container"><span class="feed-title">| & sFeedTitle & |:&nbsp;</span><a class="feed-link" href="| & url & |"><img border="0" alt="rss" src="xml_button.gif" />&nbsp;| & url & |</a></li>|
+      		End If
+      		Set nve = nvc.GetNextEntry( nve )
+      		nCnt = 1 + nCnt
+      	Loop
+      	
+      	'// Print the HTML body
+      	Print |</head><body>| & GetBodyHeading & |<ul>|
+      	'// Print the feed links
+      	For nCnt=1 To nvc.Count
+      		Print vh(nCnt)
+      	Next nCnt
+      	Print |</ul></body></html>|
+      	
+      End Sub
+      '++LotusScript Development Environment:2:1:GetWebDbPath:1:8
+      Function GetWebDbPath( sUrl$ ) As String
+      	Dim i%
+      	i = Instr(Lcase(sUrl), kThisAgentName)
+      	If ( i>0 ) Then
+      		GetWebDbPath = Left( sUrl, i-1 )
+      	Else
+      		GetWebDbPath = sUrl
+      	End If
+      End Function
+      '++LotusScript Development Environment:2:1:GetBodyHeading:1:8
+      Function GetBodyHeading() As String
+      	Dim heading$
+      	On Error Resume Next
+      	
+      	'// GetProfileDoc will try to create a new doc if non exists ... normal users will not have the ability to create a profile doc.
+      	If (Not prefDoc Is Nothing) And (True=prefDoc.HasItem("af_heading")) Then
+      		heading = prefDoc.GetItemValue("af_heading")(0)
+      	End If
+      	If ("" = heading) Then
+      		heading = |<style>HR{height:2px;} .feed-container{} .feed-title{display:block;} .feed-link{text-decoration:none;} .feed-link:hover{}</style>| & Chr(13) & |<p><hr/><h1><b>Available Feeds</b></h1><hr/>* Add the links below to your favorite RSS feed reader:</p>|
+      	End If
+      	GetBodyHeading = heading
+      End Function
+      '++LotusScript Development Environment:2:1:GetURLPrefix:1:8
+      Function GetURLPrefix ( nd As NotesDocument ) As String
+      	Dim oQuery As New CGIParser(nd)
+      	Dim protocol$, sServerPort$, guid$
+      	On Error Resume Next
+      'SPR SIWA6UP3DH:  guid entry always include http port No. even if we select notes:// format
+      	'// GetProfileDoc will try to create a new doc if non exists ... normal users will not have the ability to create a profile doc.
+      	If (Not prefDoc Is Nothing) And (True=prefDoc.HasItem("protocol")) Then
+      		protocol = prefDoc.GetItemValue("protocol")(0)
+      	End If
+      	If ("" = protocol) Then
+      		protocol = "http"
+      	End If
+      	
+      	If (Not prefDoc Is Nothing) And (True=prefDoc.HasItem("guid")) Then
+      		guid = prefDoc.GetItemValue("guid")(0)
+      	Else
+      		guid="notes"
+      	End If
+      	
+      	'SPR SIWA6UP3DH:  guid entry always include http port No. even if we select notes:// format
+      	If (guid="notes"  ) Then
+      		sServerPort=""
+      	Else
+      		sServerPort=":80"
+      	End If
+      	'end SPR SIWA6UP3DH
+      	
+      	'GetURLPrefix = protocol & kProtocol & oQuery.GetHostName() & oQuery.GetPort() & GetWebDbPath(oQuery.GetURL) & kAgentName & "?openagent" & D_CGI_Begin & D_CGI_Versit & D_CGI_End
+      	GetURLPrefix = protocol & kProtocol & oQuery.GetHostName() & sServerPort & GetWebDbPath(oQuery.GetURL) & kAgentName & "?openagent" & D_CGI_Begin & D_CGI_Versit & D_CGI_End
+      End Function
+    dwFlags: 0x00000000
+    signed: true
+    nonsummary: true
+  - name: $AssistDocCount
+    type: number
+    data: 0
+    signed: true
+  - name: $AssistFlags
+    type: text
+    data: EHu
+    signed: true
+  - name: $AssistInfo
+    type_num: 17
+    type: opaque
+    opaque: |
+      AQAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistLastRun
+    type: time
+    signed: true
+  - name: $AssistQuery
+    type_num: 15
+    type: opaque
+    opaque: gQYAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistRunInfo
+    type: object
+    obj_type: 0x0008
+    obj_class: 0x0200
+    obj_privs: 0x0000
+    opaque: |
+      AAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      bQN5AClyJYW+YVEA73ElhQAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqq
+  - name: $AssistTrigger
+    type: text
+    data: "4"
+    signed: true
+  - name: $AssistType
+    type: number
+    data: 65413
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "6.5"
+    signed: true
+  - name: $Flags
+    type: text
+    data: fLu3
+  - name: $FlagsExt
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $Restricted
+    type: number
+    data: 1
+    signed: true
+  - name: $TITLE
+    type: text
+    data: (AvailableFeeds)
+    signed: true
+remaining: []

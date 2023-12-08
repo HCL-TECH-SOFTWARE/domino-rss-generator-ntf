@@ -1,0 +1,1721 @@
+---
+class: 512
+flags: 0x2000
+unid: OFB708F9081FE26082-ON005584CE852570CA
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $Revisions
+    type: time
+    data:
+      - data: "2007-07-24T11:25:54.00-04:00"
+        dst: true
+      - data: "2012-10-30T10:45:12.32-04:00"
+        dst: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      Use "iCalendarCommon"
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Sub Initialize
+      Declare Function iCAL_GetFileTitle (FullPath$) As String
+      Declare Sub iCAL_ExportToDocument (srcDoc, outDoc, sOutputFieldName$)
+      Declare Function iCAL_GetNoticeDescription () As String
+      Declare Sub iCAL_PrintChairman ()
+      Declare Sub iCAL_PrintRepeatRule ()
+      Declare Sub iCAL_Initialize( MtgDoc )
+      Declare Sub iCAL_PrintAttendeeList ()
+      Declare Function iCAL_GetUserPartStat(userName$, statusList$) As String
+      Declare Sub iCAL_GenerateOutput(isGroup%)
+      Declare Function iCAL_GetUNID () As String
+      Declare Sub iCAL_Put (vProperty$, vValue$)
+      Declare Function iCAL_GetFriendlyDescription () As String
+      Declare Function iCAL_GetUserEmail () As String
+      Declare Function iCAL_DateIsWithinAMinute() As Integer
+      Declare Function iCAL_TranslatePriority (p$) As String
+      Declare Sub iCALUI_CreateNotice (MtgDoc As NotesDocument, Action&, sAction$)
+      Declare Function iCAL_GetItemText (itemName$) As String
+      Declare Function iCAL_ZSeconds (dtZ$) As Long
+      Declare Function iCAL_ExportToFile (FileName$, MtgDoc As NotesDocument) As String
+      Declare Sub iCALUI_SendNotice (FileName$)
+      Declare Function iCALUI_ExitIfRepeating(MtgDoc As NotesDocument) As Integer
+      Declare Function iCAL_PrintToFile (FileName$, isGroup%) As String
+      Declare Sub iCAL_OpenNAB ()
+      Declare Function iCAL_GetCalType () As String
+      Declare Function iCAL_CreateUniqueFileName () As String
+      Declare Function iCAL_GetStatusDescription () As String
+      Declare Function iCAL_RepeatGetRelativeCountValue () As Integer
+      Declare Function iCAL_GetITIPMethod () As String
+      Declare Sub iCAL_Print (vProperty$, vValue$)
+      Declare Function iCAL_GetFriendlyText () As String
+      Declare Function iCAL_GetRFC822Email( nn As NotesName ) As String
+      Declare Function iCAL_IsFromChair () As Integer
+      Declare Function iCAL_RepeatUnit () As String
+      Declare Function iCAL_RepeatCount () As Integer
+      Declare Function iCAL_NewLine (Txt$) As String
+      Declare Sub iCAL_SetNoticeType(Action As Long)
+      Declare Function iCAL_Fold(Txt$) As String
+      Declare Function iCAL_Escape (Char$, Txt$) As String
+      Declare Sub iCAL_PrintRepeatInfo ()
+      Declare Function iCAL_AddAttendeeList () As Integer
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'iCalendarExport: 
+      
+      'iCalendarExport: 
+      
+      
+      'iCalendarExport: 
+      
+      
+      '  (C) Copyright 1999, Lotus Development Corporation.
+      '
+      '  By accessing and installing the Software, you indicate your
+      '  acceptance of this License.
+      '
+      '  Lotus Development Corporation "Licensor", hereby grants you a
+      '  nonexclusive, royalty-free, world-wide right and license under any
+      '  Licensor copyrights in the Software to copy and modify the Software
+      '  for personal, non-commercial use only. Any other use is prohibited.
+      '  Licensor expressly reserves all other rights, including patent rights,
+      '  that it may have in the Software. Ownership and title to the Software
+      '  and its source code shall remain at all times with Licensor.
+      '  You agree to reproduce Licensor copyright notice in any derivative
+      '  works of the Software created by you. You may not decompile,
+      '  disassemble or reverse engineer the Software, nor may you disclose
+      '  any trade secret information contained in the Software.
+      '
+      '  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTY, AND
+      '  LICENSOR SHALL HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
+      '  UPDATES, ENHANCEMENTS OR MODIFICATIONS.
+      
+      '  IN NO EVENT SHALL LICENSOR BE LIABLE TO ANY PARTY FOR DIRECT,
+      '  INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOST PROFITS ARISING
+      '  OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY
+      '  OF SUCH DAMAGE.
+      '
+      '  LICENSOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, EXPRESS OR IMPLIED,
+      '  INCLUDING BUT NOT LIMITED TO ANY WARRANTY OF NONINFRINGEMENT OR THE
+      '  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+      '  PURPOSE.
+      '
+      '  The software is provided with RESTRICTED RIGHTS.  Use, duplication,
+      '  or disclosure by the government are subject to restrictions set forth
+      '  in DFARS 252.227-7013 or 48 CFR 52.227-19, as applicable.
+      '
+      
+      '************* MODULE VARIABLES
+      Dim i_NAB As NotesDatabase
+      Dim i_Note As NotesDocument
+      Dim i_NoticeType$
+      Dim i_FriendlyDate$
+      Dim i_Chair$
+      Dim i_Sequence%
+      Dim gOut
+      Dim gLookup
+      
+      
+      
+      '++LotusScript Development Environment:2:2:Initialize:1:10
+      Sub Initialize
+      	On Error Resume Next
+      	Dim ns As New NotesSession
+      	Set gOut = New DynamicArrayICAL
+      	Set gLookup = New DirectoryLookupICAL( ns )
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetFileTitle:1:8
+      Function iCAL_GetFileTitle (FullPath$) As String
+      '================================================
+      	Dim slash%, title%, break%
+      	title = 1
+      	slash = Instr (title, FullPath, "\", 0)
+      	Do While (slash > 0)
+      		' Never want to get stuck in an infinite loop
+      		break = break + 1
+      		If (break > 50) Then Exit Do
+      		
+      		' Search for the last slash
+      		title = slash + 1
+      		slash = Instr (title, FullPath, "\", 0)
+      	Loop
+      	
+      	' Return the file title
+      	iCAL_GetFileTitle = Right (FullPath, title)
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_ExportToDocument:1:8
+      Sub iCAL_ExportToDocument (srcDoc, outDoc, sOutputFieldName$)
+      '================================================
+      	Dim isGroup%, h%
+      	
+      	If (outDoc Is Nothing) Or (srcDoc Is Nothing) Then
+      		Exit Sub
+      	End If
+      	
+      	isGroup = (gOut.getLastCount() > 0)
+      	Call iCAL_Initialize(srcDoc)
+      	If Not ("" = iCAL_GetCalType) Then
+      		Call iCAL_GenerateOutput(isGroup)
+      		Call outDoc.ReplaceItemValue( sOutputFieldName, gOut.getArray() )
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetNoticeDescription:1:8
+      Function iCAL_GetNoticeDescription () As String
+      '================================================
+      	Dim msg$
+      	msg = "UNKNOWN"
+      	
+      	Select Case i_NoticeType
+      		
+      	'--- ORIGINATOR MESSAGE
+      		
+      	Case iCAL_MSGTYPE_ADDCALENDAR
+      		msg = "Broadcast"
+      		
+      	Case iCAL_MSGTYPE_INVITE, iCAL_MSGTYPE_RESCHEDULE
+      		msg = "Invitation"
+      		If (i_Sequence > 0) Then
+      			msg = "Reschedule"
+      		End If
+      		If ("VTODO" = iCAL_GetCalType) Then msg = "Assignment"
+      		
+      	Case iCAL_MSGTYPE_CONFIRMATION
+      		msg = "Confirmation"
+      		
+      	Case iCAL_MSGTYPE_CANCEL
+      		msg = "Cancel"
+      		
+      	Case iCAL_MSGTYPE_STATUSUPDATE
+      		msg = "Status-update"
+      		
+      	Case iCAL_MSGTYPE_PENCILIN
+      		msg = "Pencil-in"
+      		
+      	Case iCAL_MSGTYPE_DELEGATE
+      		msg = "Delegation"	'Invitation
+      		
+      		
+      	'--- RESPONSES
+      		
+      	Case iCAL_MSGTYPE_ACCEPT, iCAL_MSGTYPE_COUNTERACCEPT
+      		msg = "Acceptance"
+      		
+      	Case iCAL_MSGTYPE_REJECT, iCAL_MSGTYPE_DELEGATING, iCAL_MSGTYPE_COUNTERREJECT
+      		msg = "Rejection"
+      		
+      	Case iCAL_MSGTYPE_COUNTER, iCAL_MSGTYPE_REFRESHINFO
+      		msg = "Request"
+      		
+      	Case iCAL_MSGTYPE_COMPLETED
+      		msg = "Completion"
+      		
+      	Case Else
+      		msg = "Notice"
+      	End Select
+      	
+      	iCAL_GetNoticeDescription = msg
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_PrintChairman:1:8
+      Sub iCAL_PrintChairman ()
+      '================================================
+      	Dim ChairFld$, ChairMan$, email$
+      	Dim i%
+      	On Error Resume Next
+      	
+      	If ("VEVENT" = iCAL_GetCalType) Then
+      		ChairFld = "Chair"
+      		ChairMan = "organizer of this meeting"
+      	End If
+      	If ("VTODO" = iCAL_GetCalType) Then
+      		If (True = iCAL_IsFromChair) Then
+      			ChairFld = "Principal"
+      		Else
+      			ChairFld = "SendTo"
+      		End If
+      		ChairMan = "manager of this task"
+      	End If
+      	
+      	' Get the name of the chairman
+      	Dim Chair As New NotesName(iCAL_GetItemText(ChairFld))
+      	email = Chair.Addr821
+      	If (0 = Len(email)) Then email = iCAL_GetItemText(ChairFld)
+      	
+      	
+      	If (True = iCAL_IsFromChair) Then
+      		If (Ucase(i_NS.CommonUserName) = Ucase(Chair.Common)) Then
+      			email = iCAL_GetUserEmail
+      		End If
+      	End If
+      	
+      	If (0 = Len(email)) Then email = i_NS.CommonUserName
+      	
+      	If (Instr(1, email, "@", 0) > 0) Then
+      		email = "MAILTO:" & email
+      	End If
+      	
+      	i_Chair = email
+      	iCAL_Print "ORGANIZER", email
+      	
+      	If (True = iCAL_AddAttendeeList) Then
+      		If ("VEVENT" = iCAL_GetCalType) Then
+      			iCAL_Print "ATTENDEE;ROLE=CHAIR;PARSTAT=ACCEPTED;CN=" & Chair.Common, email
+      		End If
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:2:iCAL_PrintRepeatRule:1:8
+      Sub iCAL_PrintRepeatRule ()
+      '================================================
+      	Dim rule$
+      	Dim sdate As Variant
+      	
+      	'--- Print Rule For Anniversaries and Birthdays
+      	If ("1" = iCAL_GetItemText("AppointmentType")) Then
+      		sdate = i_Note.GetItemValue("StartDateTime")
+      		rule  = "FREQ=YEARLY;INTERVAL=1"
+      		rule  = rule & ";BYMONTH=" & Month(sdate(0))
+      		rule  = rule & ";BYMONTHDAY=" & Day(sdate(0))
+      	Else
+      		'->RepeatStartDate	  	1024	[01/11/2000 07:00:00 AM]
+      		'->RepeatHow			  	1280	[F]
+      		'->RepeatUntil				1024	[01/13/2000]
+      		'->RepeatFor			  	768	[2]
+      		'->RepeatForUnit		 	1280	[W]
+      		'->RepeatUnit			 	1280	[W]
+      		'->RepeatInterval			1280	[1]
+      		
+      		sdate = i_Note.GetItemValue("RepeatStartDate")
+      		rule  = "FREQ=" & iCAL_RepeatUnit
+      		rule  = rule & ";INTERVAL=" & iCAL_GetItemText("RepeatInterval")
+      		If ("F" = iCAL_GetItemText("RepeatHow")) Then 
+      			rule  = rule & ";COUNT=" & iCAL_RepeatCount
+      		Else
+      			rule  = rule & ";UNTIL=" & iCAL_DateToZString(iCAL_GetItemText("RepeatUntil"))
+      		End If
+      		rule  = rule & ";BYMONTH=" & iCAL_GetItemText("")
+      		rule  = rule & ";BYMONTHDAY=" & iCAL_GetItemText("")
+      		rule  = rule & ";BYDAY=" & iCAL_GetItemText("")
+      		rule = ""
+      	End If
+      	
+      	iCAL_Put "RRULE", rule
+      End Sub
+      
+      '++LotusScript Development Environment:2:2:iCAL_Initialize:1:8
+      Sub iCAL_Initialize( MtgDoc )
+      	On Error Resume Next
+      	iCAL_Session
+      	Set i_Note = MtgDoc
+      	
+      	'--- We need to determine MtgType and MtgMode,
+      	'	  since it is not being handed to us
+      	
+      	If ("VEVENT" = iCAL_GetCalType) Then
+      		If (0 = Len(i_NoticeType)) Then 
+      			If (0=Len(iCAL_GetItemText("RequiredAttendees"))) Then
+      				' Treat as a Broadcast
+      				i_NoticeType = iCAL_MSGTYPE_ADDCALENDAR
+      			Else
+      				i_NoticeType = iCAL_MSGTYPE_INVITE
+      			End If
+      		End If
+      	End If
+      	
+      	If ("VTODO" = iCAL_GetCalType) Then
+      		If (0 = Len(i_NoticeType)) Then 
+      			Select Case Val(iCAL_GetItemText("AssignState"))
+      			Case 0, 1, 2
+      				i_NoticeType = iCAL_MSGTYPE_INVITE
+      			Case 8
+      				i_NoticeType = iCAL_MSGTYPE_REJECT
+      			Case 9
+      				i_NoticeType = iCAL_MSGTYPE_COMPLETED
+      			Case Else
+      				i_NoticeType = iCAL_MSGTYPE_CANCEL
+      			End Select
+      		End If
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:2:iCAL_PrintAttendeeList:1:8
+      Sub iCAL_PrintAttendeeList ()
+      '================================================
+      	Dim attList As Variant
+      	Dim justMe(0 To 0) As String
+      	Dim attProp$, attVal$, role$, status$, rsvp$, comm$
+      	Dim i%, attStat%
+      	Dim attName As NotesName
+      	On Error Resume Next
+      	
+      	
+      	' RSVP
+      	rsvp = "FALSE"
+      	
+      	' STATUS
+      	attStat = False
+      	status  = iCAL_GetStatusDescription
+      	If ("VEVENT" = iCAL_GetCalType) Then
+      		If (True = iCAL_IsFromChair) Then
+      			If (False = iCAL_AddAttendeeList) Then Exit Sub
+      			If Not (iCAL_MSGTYPE_INVITE = i_NoticeType) Then 
+      				attStat = True
+      				status  = iCAL_GetItemText("StatusUpdate")
+      			End If
+      			rsvp = "TRUE"
+      		End If
+      	End If
+      	If ("VTODO" = iCAL_GetCalType) And (iCAL_MSGTYPE_INVITE = i_NoticeType) Then
+      		rsvp = "TRUE"
+      	End If
+      	
+      	
+      	' PROCESS LIST OF ATTENDEES
+      	If (True = iCAL_IsFromChair) Then
+      		
+      		If ("VEVENT" = iCAL_GetCalType) Then
+      			If (i_Note.HasItem("REQUIREDATTENDEES")) Then
+      				attList = i_Note.GetItemValue("REQUIREDATTENDEES")
+      				role = "REQ-PARTICIPANT"
+      				Gosub ProcessList
+      			Else
+      				If (i_Note.HasItem("SendTo")) Then
+      					attList = i_Note.GetItemValue("SendTo")
+      					role = "REQ-PARTICIPANT"
+      					Gosub ProcessList
+      				End If
+      			End If
+      			
+      			If (i_Note.HasItem("OPTIONALATTENDEES")) Then
+      				attList = i_Note.GetItemValue("OPTIONALATTENDEES")
+      				role = "OPT-PARTICIPANT"
+      				Gosub ProcessList
+      			End If
+      		End If 
+      		
+      		If ("VTODO" = iCAL_GetCalType) Then
+      			If (i_Note.HasItem("AssignedTo")) Then
+      				attList = i_Note.GetItemValue("AssignedTo")
+      				If (0 = Len(Cstr(attList))) Then attList = i_Note.GetItemValue("SendTo")
+      				role = "REQ-PARTICIPANT"
+      				Gosub ProcessList
+      			End If
+      		End If
+      		
+      	Else
+      		justMe(0) = i_NS.UserName
+      		If ("DELEGATED" = status) Or ("DECLINED" = status) Then
+      			role = "NON-PARTICIPANT"
+      		End If
+      		attList = justMe
+      		Gosub ProcessList
+      	End If
+      	
+      	Exit Sub
+      	
+      ProcessList:
+      	For i = Lbound(attList) To Ubound(attList)
+      		If Not (0 = Len(attList(i))) Then
+      			
+      			'Build then print
+      			Set attName = New NotesName(attList(i))
+      			
+      			'Name
+      			comm = attName.Common
+      			If (0 = Len(comm)) Then
+      				attProp = "ATTENDEE"
+      			Else
+      				attProp = "ATTENDEE;CN=" & comm
+      			End If
+      			
+      			'Role
+      			If Not (0 = Len(role)) Then
+      				attProp = attProp & ";ROLE=" & role
+      			End If
+      			
+      			'Status
+      			If (True = attStat) Then
+      				attProp = attProp & ";PARTSTAT=" & iCAL_GetUserPartStat(attList(i), status)
+      			Else
+      				attProp = attProp & ";PARTSTAT=" & status
+      			End If
+      			
+      			'Rsvp
+      			attProp = attProp & ";RSVP=" & rsvp
+      			
+      			'Value (Mailing Address)
+      			attVal  = attName.Addr821
+      			If (0 = Len(attVal)) Then 
+      				If (i_NS.CommonUserName = comm) Then 
+      					attVal = "MAILTO:" & iCAL_GetUserEmail
+      				Else
+      					attVal = attList(i) 
+      				End If
+      			Else 
+      				attVal = "MAILTO:" & attVal
+      			End If
+      			
+      			iCAL_Print attProp, attVal
+      		End If
+      	Next i
+      	'End ForAll
+      	Return
+      	
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetUserPartStat:1:8
+      Function iCAL_GetUserPartStat(userName$, statusList$) As String
+      '================================================
+      	Dim uname%, comma%, arrow%
+      	Dim status$
+      	status = "Needs-Action"
+      	If (Len(userName) > 0) And (Len(statusList) > 0) Then
+      		uname = Instr(1, Ucase(statusList), Ucase(userName), 0)
+      		If (uname > 0) Then
+      			arrow = Instr(uname, statusList, "->", 0)
+      			If (arrow > 0) Then
+      				status = Mid(statusList, arrow + 2)
+      				comma = Instr(uname, status, ",", 0)
+      				If (comma > 0) Then
+      					status = Left(status, comma - 1)
+      				End If
+      			End If
+      		End If
+      	End If
+      	iCAL_GetUserPartStat = Ucase(Trim(status))
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_GenerateOutput:1:8
+      Sub iCAL_GenerateOutput(isGroup%)
+      	Dim pNote As NotesDocument
+      	Dim dateTmp As NotesDateTime
+      	Dim strTmp$
+      	Dim topic$
+      	Dim nCount%, nMax%
+      	On Error Resume Next
+      	
+      	' INITIALIZE DATA
+      	'-----------------------------------
+      	
+      	' GET PARENT IF THIS IS A RESPONSE
+      	If (True = i_Note.IsResponse) Then
+      		strTmp = i_Note.ParentDocumentUNID
+      		Set pNote = i_MailDB.GetDocumentByUNID(strTmp)
+      		If (pNote Is Nothing) Then Set pNote = i_Note
+      	Else
+      		Set pNote = i_Note
+      	End If
+      	
+      	
+      	' PRINT CALENDAR HEADER INFO
+      	'-----------------------------------
+      	If (False = isGroup) Then
+      		iCAL_Print "BEGIN",	"VCALENDAR"
+      		iCAL_Print "PRODID",	iCAL_PRODUCT_ID
+      		iCAL_Print "VERSION",	"2.0"
+      		iCAL_Print "METHOD",	iCAL_GetITIPMethod
+      	Else
+      		'--- Remove last END:VCALENDAR line
+      		nMax = gOut.getLastCount()
+      		For nCount = nMax To 0 Step -1
+      			If ("END:VCALENDAR" = gOut.getLine(nCount)) Then
+      				Call gOut.setLine(nCount, "")
+      				Exit For
+      			End If
+      		Next nCount
+      	End If
+      	
+      	' PRINT COMPONENT HEADER INFO
+      	'-----------------------------------
+      	iCAL_Print "BEGIN",	iCAL_GetCalType
+      	iCAL_Print "UID",	iCAL_GetUNID
+      	iCAL_Print "DTSTAMP",	iCAL_DateToZString(0)
+      	
+      	
+      	' CATEGORIES
+      	'-----------------------------------
+      	iCAL_Put "CATEGORIES", iCAL_ReplaceChr(iCAL_GetItemText("Categories"), ";", ",")
+      	
+      	' CLASS
+      	'-----------------------------------
+      	If ("1" = iCAL_GetItemText("OrgConfidential")) Then
+      		iCAL_Print "CLASS", "CONFIDENTIAL"
+      	Else
+      		iCAL_Print "CLASS", "PUBLIC"
+      	End If
+      	
+      	' COMMENT
+      	'-----------------------------------
+      	Select Case iCAL_GetITIPMethod
+      	Case "REPLY", "CANCEL", "COUNTER", "DECLINECOUNTER"
+      		strTmp = ""
+      		If Not (pNote Is Nothing) Then
+      			If (True = pNote.HasItem("Reason")) Then
+      				strTmp = pNote.GetFirstItem("Reason").Text
+      			End If
+      			If (0 = Len(strTmp)) Then
+      				If (True = pNote.HasItem("Comment")) Then
+      					strTmp = pNote.GetFirstItem("Comment").Text
+      				End If
+      			End If
+      		End If
+      		If (Len(strTmp) > 0) Then
+      			iCAL_Print "COMMENT", iCAL_NewLine(strTmp)
+      		Else
+      			iCAL_Print "COMMENT", iCAL_NewLine(iCAL_GetItemText("Comment"))
+      		End If
+      	End Select
+      	
+      	' DESCRIPTION
+      	'-----------------------------------
+      	If (True = iCAL_IsFromChair) Then
+      		iCAL_Print "DESCRIPTION", iCAL_NewLine(iCAL_GetItemText("Body"))
+      	End If
+      	
+      	
+      	' EVENT TIME & DURATION
+      	'-----------------------------------
+      	'--- start
+      	If (iCAL_MSGTYPE_COUNTER = i_NoticeType) Then
+      		If Not (pNote Is Nothing) Then
+      			If (pNote.HasItem("NewDate")) Then
+      				strTmp		= pNote.GetFirstItem("NewTimeRange").Text
+      				strTmp		= Trim(Left(strTmp, Instr(1, strTmp, "-", 0) - 1))
+      				Set dateTmp = pNote.GetFirstItem("NewDate").DateTimeValue
+      				strTmp		= dateTmp.DateOnly & " " & strTmp
+      				Set dateTmp = New NotesDateTime(strTmp)
+      				iCAL_Print "DTSTART",  iCAL_DateToZString(dateTmp.LSLocalTime)
+      			Else
+      				strTmp		= pNote.GetFirstItem("NewStartTime").Text
+      				Set dateTmp = pNote.GetFirstItem("NewStartDate").DateTimeValue
+      				strTmp		= dateTmp.DateOnly & " " & strTmp
+      				Set dateTmp = New NotesDateTime(strTmp)
+      				iCAL_Print "DTSTART",  iCAL_DateToZString(dateTmp.LSLocalTime)
+      			End If
+      		Else
+      			strTmp		= iCAL_GetItemText("NewStartTime")
+      			Set dateTmp = i_Note.GetFirstItem("NewStartDate").DateTimeValue
+      			strTmp		= dateTmp.DateOnly & " " & strTmp
+      			Set dateTmp = New NotesDateTime(strTmp)
+      			iCAL_Print "DTSTART",  iCAL_DateToZString(dateTmp.LSLocalTime)
+      		End If
+      		i_FriendlyDate = dateTmp.LSLocalTime
+      	Else
+      		iCAL_Print "DTSTART",  iCAL_DateToZString(iCAL_GetItemText("StartDateTime"))
+      		i_FriendlyDate = iCAL_GetItemText("StartDateTime")
+      	End If
+      	
+      	'--- end
+      	If (i_Note.HasItem("EndDateTime")) Then
+      		If (iCAL_MSGTYPE_COUNTER = i_NoticeType) Then
+      			If Not (pNote Is Nothing) Then
+      				If (pNote.HasItem("NewDate")) Then
+      					strTmp		= pNote.GetFirstItem("NewTimeRange").Text
+      					strTmp		= Trim(Mid(strTmp, Instr(1, strTmp, "-", 0) + 1))
+      					Set dateTmp = pNote.GetFirstItem("NewDate").DateTimeValue
+      					strTmp		= dateTmp.DateOnly & " " & strTmp
+      					Set dateTmp = New NotesDateTime(strTmp)
+      					iCAL_Print "DTEND", iCAL_DateToZString(dateTmp.LSLocalTime)
+      				Else
+      					strTmp		= pNote.GetFirstItem("NewEndTime").Text
+      					Set dateTmp = pNote.GetFirstItem("NewEndDate").DateTimeValue
+      					strTmp		= dateTmp.DateOnly & " " & strTmp
+      					Set dateTmp = New NotesDateTime(strTmp)
+      					iCAL_Print "DTEND",  iCAL_DateToZString(dateTmp.LSLocalTime)
+      				End If
+      			Else
+      				strTmp		= iCAL_GetItemText("NewEndTime")
+      				Set dateTmp = i_Note.GetFirstItem("NewEndDate").DateTimeValue
+      				strTmp		= dateTmp.DateOnly & " " & strTmp
+      				Set dateTmp = New NotesDateTime(strTmp)
+      				iCAL_Print "DTEND",  iCAL_DateToZString(dateTmp.LSLocalTime)
+      			End If
+      		Else
+      			iCAL_Print "DTEND", iCAL_DateToZString(iCAL_GetItemText("EndDateTime"))
+      		End If
+      	Else
+      		If (i_Note.HasItem("DueDateTime")) Then
+      			iCAL_Print "DUE",		iCAL_DateToZString(iCAL_GetItemText("DueDateTime"))
+      		Else
+      			iCAL_Print "DURATION", iCAL_GetItemText("Duration")
+      		End If
+      	End If
+      	
+      	' REPEATING INFO 
+      	'-----------------------------------
+      	If ("1" = iCAL_GetItemText("OrgRepeat")) Then
+      		If (0 = Len(iCAL_GetItemText("RepeatDates"))) And (0 = Len(iCAL_GetItemText("RepeatInstanceDates"))) Then
+      			'--- Child of repeat parent
+      			iCAL_Print "RECURRENCE-ID", iCAL_DateToZString(iCAL_GetItemText("StartDateTime"))
+      		Else
+      			'--- Repeat parent note
+      			iCAL_PrintRepeatInfo
+      		End If
+      	Else
+      		'--- Make Anniversaries Repeating Events
+      		If ("1" = iCAL_GetItemText("AppointmentType")) Then
+      			iCAL_PrintRepeatInfo
+      		End If
+      	End If
+      	
+      	
+      	' LOCATION
+      	'-----------------------------------
+      	If (Len(iCAL_GetItemText("Location")) > 0) Then
+      		iCAL_Print "LOCATION", iCAL_GetItemText("Location")
+      	Elseif (Len(iCAL_GetItemText("NewRoom")) > 0) Then
+      		iCAL_Print "LOCATION", iCAL_GetItemText("NewRoom")
+      	Else
+      		iCAL_Print "LOCATION", iCAL_GetItemText("Room")
+      	End If
+      	
+      	' ORGANIZER & ATTENDEES
+      	'-----------------------------------
+      	iCAL_PrintChairman
+      	iCAL_PrintAttendeeList
+      	
+      	' PRIORITY
+      	'-----------------------------------
+      	iCAL_Print "PRIORITY", iCAL_TranslatePriority(iCAL_GetItemText("Importance"))
+      	
+      	' SEQUENCE
+      	'-----------------------------------
+      	i_Sequence = 0
+      		' first try the parent doc
+      	If (True = pNote.HasItem("SequenceNum")) Then
+      		i_Sequence = Val(pNote.GetFirstItem("SequenceNum").Text) - 1
+      	End If
+      		' now try this doc
+      	If (i_Sequence = 0) Then i_Sequence = Val(iCAL_GetItemText("SequenceNum")) - 1
+      		' negetive numbers are not allowed
+      	If (i_Sequence < 0) Then i_Sequence=0
+      	iCAL_Print "SEQUENCE", Cstr(i_Sequence)
+      	
+      	' STATUS
+      	'-----------------------------------
+      	If ("VEVENT" = iCAL_GetCalType) Then
+      		If (iCAL_MSGTYPE_CANCEL = i_NoticeType) Then
+      			iCAL_Print "STATUS", "CANCELLED"
+      		Else
+      			If ("1" = iCAL_GetItemText("BookFreeTime")) Then
+      				iCAL_Print "STATUS", "TENTATIVE"
+      				iCAL_Print "TRANSP", "TRANSPARENT"
+      			Else
+      				If (iCAL_MSGTYPE_ADDCALENDAR = i_NoticeType) Then
+      					iCAL_Print "STATUS", "CONFIRMED"
+      					iCAL_Print "TRANSP", "OPAQUE"
+      				Else
+      					If ("2"=iCAL_GetItemText("$BusyPriority")) Then
+      						iCAL_Print "STATUS", "TENTATIVE"
+      						iCAL_Print "TRANSP", "TRANSPARENT"
+      					Else
+      						iCAL_Print "STATUS", "CONFIRMED"
+      						iCAL_Print "TRANSP", "OPAQUE"
+      					End If
+      				End If
+      			End If
+      		End If
+      	End If
+      	
+      	If ("VTODO" = iCAL_GetCalType) Then
+      		iCAL_Print "STATUS", iCAL_GetStatusDescription
+      	End If
+      	
+      	' SUMMARY
+      	'-----------------------------------
+      	If (Len(iCAL_GetItemText("Topic")) > 0) Then
+      		topic = iCAL_GetItemText("Topic")
+      	Else
+      		topic = iCAL_GetItemText("Subject")
+      	End If
+      	If ("do not delete - repeat parent for " = Lcase(Left(topic, 34))) Then
+      		topic = Mid(topic, 35)
+      	End If
+      	iCAL_Print "SUMMARY", iCAL_NewLine(topic)
+      	
+      	
+      	' PRINT CLOSING INFO
+      	'-----------------------------------
+      	iCAL_Print "END", iCAL_GetCalType
+      	iCAL_Print "END", "VCALENDAR"
+      	
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetUNID:1:8
+      Function iCAL_GetUNID () As String
+      '================================================
+      	Dim UNID$
+      	Dim separator%
+      	
+      	'--- Get the UniversalID
+      	UNID = iCAL_GetItemText(iCAL_ITEM_UID)
+      	If (0 = Len(UNID)) Then
+      		UNID = iCAL_GetItemText("APPTUNID")
+      		If (0 = Len(UNID)) Then
+      			UNID = i_Note.UniversalID
+      		End If
+      	End If
+      	
+      	'--- Strip User Response Tag
+      	separator = Instr(1, UNID, iCAL_DIVIDER_RESP, 0)
+      	If (separator > 0) Then UNID = Left(UNID, separator - 1)
+      	
+      	'--- Add Owner Tag If Invitation
+      	If ("I" = i_NoticeType) Then 
+      		separator = Instr(1, UNID, iCAL_DIVIDER_ORIG, 0)
+      		If (separator = 0) Then 
+      			UNID = i_MailDB.ReplicaID & iCAL_DIVIDER_ORIG & UNID
+      		End If
+      	End If
+      	
+      	iCAL_GetUNID = UNID
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_Put:1:8
+      Sub iCAL_Put (vProperty$, vValue$)
+      '================================================
+      	On Error Resume Next
+      	
+      	' Print the Prop/Val pair literally
+      	' nothing is escaped
+      	If (Len(vValue) > 0) And (Len(vProperty) > 0) Then
+      		gOut.append( iCAL_Fold(vProperty & ":" & vValue) )
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetFriendlyDescription:1:8
+      Function iCAL_GetFriendlyDescription () As String
+      '================================================
+      	Dim msg$
+      	msg = ""
+      	
+      	Select Case i_NoticeType
+      		
+      	'--- ORIGINATOR MESSAGE
+      	'----------------------
+      	Case iCAL_MSGTYPE_ADDCALENDAR
+      		msg = " wants to share this schedule with you."
+      		
+      	Case iCAL_MSGTYPE_INVITE, iCAL_MSGTYPE_RESCHEDULE, iCAL_MSGTYPE_DELEGATE
+      		msg = " wants you to attend a meeting."
+      		If (i_Sequence > 0) Then
+      			msg = " has rescheduled this meeting."
+      		End If
+      		If ("VTODO" = iCAL_GetCalType) Then msg = " has assigned this task to you."
+      		
+      	Case iCAL_MSGTYPE_CONFIRMATION
+      		msg = " has confirmed this meeting."
+      		
+      	Case iCAL_MSGTYPE_CANCEL
+      		msg = " has cancelled this meeting."
+      		If ("VTODO" = iCAL_GetCalType) Then msg = " has cancelled this assigned task."
+      		
+      	Case iCAL_MSGTYPE_STATUSUPDATE
+      		msg = " has updated the details of this meeting."
+      		
+      		
+      	'--- ATTENDEE RESPONSE
+      	'---------------------
+      	Case iCAL_MSGTYPE_ACCEPT, iCAL_MSGTYPE_COUNTERACCEPT
+      		msg = " has accepted your invitation."
+      		
+      	Case iCAL_MSGTYPE_REJECT, iCAL_MSGTYPE_COUNTERREJECT
+      		msg = " has declined your invitation."
+      		If ("VTODO" = iCAL_GetCalType) Then msg = " has declined the assigned task."
+      		
+      	Case iCAL_MSGTYPE_DELEGATING
+      		msg = " will not be attending your meeting, and has delegated the invitation to another person."
+      		
+      	Case iCAL_MSGTYPE_COUNTER
+      		msg = " would like you to reschedule your meeting."
+      		
+      	Case iCAL_MSGTYPE_REFRESHINFO
+      		msg = " would like you to send an update of your meeting."
+      		
+      	Case iCAL_MSGTYPE_COMPLETED
+      		msg = " has completed the assigned task."
+      		
+      	End Select
+      	
+      	iCAL_GetFriendlyDescription = i_NS.CommonUserName & msg
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetUserEmail:1:8
+      Function iCAL_GetUserEmail () As String
+      '================================================
+      	' take a guess using format:
+      	'	  common_name@organization.com
+      	'	  i.e. frank_dawson@lotus.com
+      	Dim email$, locID$
+      	Dim tmp%
+      	Dim IMail As Variant
+      	Dim locDoc As NotesDocument
+      	Dim Chair As New NotesName(i_NS.UserName)
+      	
+      	
+      	'--- Search Location Doc for Internet Email Setting
+      	locID = i_NS.GetEnvironmentString("Location", True)
+      	tmp = Instr(1, locID, ",", 0)
+      	If (tmp > 0) Then
+      		locID = Mid(locID, tmp + 1)
+      		tmp = Instr(1, locID, ",", 0)
+      		If (tmp > 0) Then
+      			locID = Left(locID, tmp - 1)
+      		End If
+      	End If
+      	If Not (0 = Len(locID)) Then
+      		iCAL_OpenNAB
+      		Set locDoc = i_NAB.GetDocumentByID(locID)
+      		If Not (locDoc Is Nothing) Then
+      			IMail = locDoc.GetItemValue("IMailAddress")
+      			email = Cstr(IMail(0))
+      		End If
+      	End If
+      	
+      	'--- If No Internet Email Setting, Then look it up in the Public NAB
+      	If (0 = Len(email)) Then 
+      		email = iCAL_GetRFC822Email(Chair)
+      		
+      		'--- Save Setting For The User
+      		If Not (0 = Len(locID)) Then
+      			iCAL_OpenNAB
+      			Set locDoc = i_NAB.GetDocumentByID(locID)
+      			If Not (locDoc Is Nothing) Then
+      				Call locDoc.ReplaceItemValue("IMailAddress", email)
+      				Call locDoc.Save (True, False, True)
+      			End If
+      		End If
+      	End If
+      	
+      	If (0 = Len(email)) Then email = i_NS.CommonUserName
+      	iCAL_GetUserEmail = email
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_DateIsWithinAMinute:1:8
+      Function iCAL_DateIsWithinAMinute() As Integer
+      '================================================
+      	Dim dtSav$, dtNow$
+      	Dim secsDiff&
+      	Dim rtn%
+      	
+      	dtSav = i_NS.GetEnvironmentString("iCal-LastUsed", False)
+      	dtNow = iCAL_DateToZString(0)
+      	
+      	rtn = False
+      	
+      	'--- Within the same year?
+      	If (Left(dtNow, 4) = Left(dtSav, 4)) Then
+      		'--- Within 15 Seconds?
+      		secsDiff = iCAL_ZSeconds(dtNow) - iCAL_ZSeconds(dtSav)
+      		If (secsDiff < 15&) Then
+      			rtn = True
+      		End If
+      	End If
+      	
+      	iCAL_DateIsWithinAMinute = rtn
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_TranslatePriority:1:8
+      Function iCAL_TranslatePriority (p$) As String
+      '================================================
+      	Select Case p$
+      	Case "1"
+      		p = "1"
+      	Case "2"
+      		p = "4"
+      	Case "7"
+      		p = "1"
+      	Case "99"
+      		p = "9"
+      	End Select
+      	iCAL_TranslatePriority = p
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCALUI_CreateNotice:1:8
+      Sub iCALUI_CreateNotice (MtgDoc As NotesDocument, Action&, sAction$)
+      '================================================
+      	Dim FNAME$, FTITLE$, bodyText$
+      	Dim iBody As Variant
+      	On Error Goto ERROR_ATTACH
+      	
+      	iCAL_Session
+      	
+      	If (False = iCAL_AutoCreate) Then Goto EXIT_ATTACH
+      	If (MtgDoc Is Nothing)		 Then Goto EXIT_ATTACH
+      	
+      	Select Case Action
+      	Case 6, 4, 1
+      		'Continue_Processing
+      		Call iCAL_DumpItemInfo (MtgDoc)
+      		If (True = iCALUI_ExitIfRepeating(MtgDoc)) Then Goto EXIT_ATTACH
+      	Case Else
+      		Goto EXIT_ATTACH
+      	End Select
+      	
+      	If (Action  = 1) Then 
+      		i_NoticeType = Ucase(sAction)
+      	Else
+      		Call iCAL_SetNoticeType(Action)
+      	End If
+      	If (i_NoticeType = "G") Then Goto EXIT_ATTACH
+      	
+      	'--- Create iCAL Message File
+      	FNAME = Lcase(iCAL_ExportToFile ("", MtgDoc))
+      	If (0=Len(FNAME)) Then Goto EXIT_ATTACH
+      	FTITLE = iCAL_GetFileTitle(FNAME)
+      	
+      	'--- Send My Own Notice Document
+      	iCALUI_SendNotice FNAME
+      	
+      	'--- Delete iCAL File From Disk
+      	Kill FNAME
+      	Goto EXIT_ATTACH
+      	
+      ERROR_ATTACH:
+      	iCAL_Status "Attach: " & Error
+      	Resume EXIT_ATTACH
+      EXIT_ATTACH:
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetItemText:1:8
+      Function iCAL_GetItemText (itemName$) As String
+      '================================================
+      	Dim value$
+      	Dim LNItem As NotesItem
+      	On Error Goto ERROR_GET_ITEM
+      	
+      	If (0 = Len(itemName)) Then Exit Function
+      	value = ""
+      	Set LNItem = i_Note.GetFirstItem(itemName)
+      	If Not (LNItem Is Nothing) Then
+      		value = LNItem.Text
+      	End If
+      	Goto EXIT_GET_ITEM
+      	
+      ERROR_GET_ITEM:
+      	Resume EXIT_GET_ITEM
+      EXIT_GET_ITEM:
+      	iCAL_GetItemText = value
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_ZSeconds:1:8
+      Function iCAL_ZSeconds (dtZ$) As Long
+      '================================================
+      	Dim secs&
+      	Dim days%
+      	Dim MD_VAL(1 To 12) As Long
+      	Const D_VAL& = 86400&
+      	Const H_VAL& = 3600&
+      	Const M_VAL& = 60&
+      	
+      	MD_VAL(1)  = 0&
+      	MD_VAL(2)  = 31&
+      	MD_VAL(3)  = 59&
+      	MD_VAL(4)  = 90&
+      	MD_VAL(5)  = 120&
+      	MD_VAL(6)  = 151&
+      	MD_VAL(7)  = 181&
+      	MD_VAL(8)  = 212&
+      	MD_VAL(9)  = 243&
+      	MD_VAL(10) = 273&
+      	MD_VAL(11) = 304&
+      	MD_VAL(12) = 334&
+      	
+      	'Get Seconds
+      	secs = Clng(Val(Mid(dtZ, 14, 2)))
+      	'Add Seconds from Minutes
+      	secs = secs + (M_VAL * Clng(Val(Mid(dtZ, 12, 2))))
+      	'Add Seconds from Hours
+      	secs = secs + (H_VAL * Clng(Val(Mid(dtZ, 10, 2))))
+      	'Add Seconds from Days
+      	days = MD_VAL(Val(Mid(dtZ, 5, 2))) + Val(Mid(dtZ, 7, 2))
+      	secs = secs + (D_VAL * Clng(days))
+      	
+      	iCAL_ZSeconds = secs
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_ExportToFile:1:8
+      Function iCAL_ExportToFile (FileName$, MtgDoc As NotesDocument) As String
+      '================================================
+      	Dim isGroup%
+      	On Error Resume Next
+      	
+      	If (MtgDoc Is Nothing) Then
+      		Exit Function
+      	End If
+      	
+      	isGroup = (gOut.getLastCount() > 0)	
+      	Call iCAL_Initialize(MtgDoc)
+      	If Not ("" = iCAL_GetCalType) Then
+      		iCAL_ExportToFile = iCAL_PrintToFile (FileName, isGroup)
+      	End If
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCALUI_SendNotice:1:8
+      Sub iCALUI_SendNotice (FileName$)
+      '================================================
+      	Dim memo As NotesDocument
+      	Dim body As Variant
+      	Dim msg$
+      	On Error Goto ERROR_SENDNOTICE
+      	
+      	Set  memo = i_MailDB.CreateDocument
+      	Call memo.AppendItemValue("Form", "Memo")
+      	
+      	'--- SendTo
+      	If (True = iCAL_IsFromChair) Then
+      		msg = iCAL_GetItemText("RequiredAttendees")
+      		If (Len(iCAL_GetItemText("OptionalAttendees")) > 0) Then msg = msg & ";" & iCAL_GetItemText("OptionalAttendees")
+      		If (Len(msg) < 2) Then 
+      			msg = iCAL_GetItemText("Recipients")
+      			If (Len(msg) < 2) Then 
+      				msg = iCAL_GetItemText("SendTo")
+      				If (Len(iCAL_GetItemText("CopyTo")) > 0) Then msg = msg & ";" & iCAL_GetItemText("CopyTo")
+      			End If
+      		End If
+      		Call memo.AppendItemValue("SendTo", iCAL_ExplodeList(msg))
+      	Else
+      		Call memo.AppendItemValue("SendTo", iCAL_Addr821(i_Chair))
+      	End If
+      	
+      	'--- Subject
+      	msg = iCAL_GetNoticeDescription & " from " & i_NS.CommonUserName
+      	Call memo.AppendItemValue("Subject", msg)
+      	
+      	'--- Body
+      	Set body = memo.CreateRichTextItem("Body")
+      	Call body.AppendText(iCAL_GetFriendlyText)
+      	Call body.EmbedObject( EMBED_ATTACHMENT, _
+      	"text/calendar; charset=US_ASCII", _
+      	FileName, iCAL_GetFileTitle(FileName) )
+      	
+      	'--- SEND THE NOTICE
+      	Print "Sending the iCalendar notice ..."
+      	Call memo.Save (True, False, True)
+      	Call memo.Send (False)
+      	Call memo.Remove (True)
+      	Print ""
+      	
+      	Exit Sub
+      	
+      ERROR_SENDNOTICE:
+      	Messagebox "Error:" & Chr(13) & Error(), 16, "Error Sending iCalendar Message"
+      	Resume Next
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCALUI_ExitIfRepeating:1:8
+      Function iCALUI_ExitIfRepeating(MtgDoc As NotesDocument) As Integer
+      '================================================
+      	Dim IsRepeating%
+      	Dim msg$
+      	IsRepeating = False
+      	If (True = MtgDoc.HasItem("OrgRepeat")) Then
+      		If (False = MtgDoc.HasItem("RepeatDates")) Then
+      			IsRepeating = True
+      			msg = "iCalendar cannot send repeating events automatically" & Chr(13) & _
+      			" with this version of Notes." & Chr(13) & Chr(13) & _
+      			"To send a repeating event:" & Chr(13) & _
+      			"- Run iCalendar\Export agent" & Chr(13) & _
+      			"- Attach the iCalendar file to a memo" & Chr(13) & _
+      			"- Send this memo to all of your Internet friends"
+      			Messagebox msg, 0, "Cannot Send iCalendar"
+      		End If
+      	End If
+      	iCALUI_ExitIfRepeating = IsRepeating
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_PrintToFile:1:8
+      Function iCAL_PrintToFile (FileName$, isGroup%) As String
+      '================================================
+      	' Returns full path of file created.
+      	' and prints Notes fields in an iCal format
+      	Dim FNAME$, FNUM%
+      	
+      	FNUM  = Freefile
+      	If (Len(FileName) > 0) Then 
+      		FNAME = FileName
+      	Else
+      		FNAME = iCAL_CreateUniqueFileName
+      	End If
+      	
+      	Call iCAL_GenerateOutput(isGroup)
+      	
+      	Open FNAME For Output As #FNUM
+      	Forall v In gOut.getArray()
+      		If (v<>"") Then
+      			Print #FNUM, v
+      		End If
+      	End Forall
+      	Close #FNUM
+      	
+      	iCAL_PrintToFile = FNAME
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_OpenNAB:1:8
+      Sub iCAL_OpenNAB ()
+      '================================================
+      	Dim nab$
+      	Dim comma%
+      	
+      	nab = i_NS.GetEnvironmentString("Names", True)
+      	If (0 = Len(nab)) Then nab = "names.nsf"
+      	comma = Instr(1, nab, ",", 0)
+      	If (comma > 0) Then
+      		nab = Left(nab, comma - 1)
+      	End If
+      	Set i_NAB = i_NS.GetDatabase("", nab)
+      	
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetCalType:1:8
+      Function iCAL_GetCalType () As String
+      '================================================
+      	Select Case Ucase(iCAL_GetItemText("Form"))
+      	Case "NOTICE", "APPOINTMENT"
+      		iCAL_GetCalType = "VEVENT"
+      	Case "TASK"
+      		iCAL_GetCalType = "VTODO"
+      	End Select
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_CreateUniqueFileName:1:8
+      Function iCAL_CreateUniqueFileName () As String
+      '================================================
+      	Dim FDIR$, FNAME$
+      	Dim i%
+      	
+      	FDIR  = iCAL_GetFolder
+      	If Not ("\" = Right(FDIR, 1)) Then
+      		FDIR = FDIR & "\"
+      	End If
+      	
+      	FNAME = FDIR & iCAL_GetNoticeDescription & ".ics"
+      	Do While Not (0 = Len(Dir(FNAME)))
+      		i = i + 1
+      		FNAME = FDIR & iCAL_GetNoticeDescription & iCAL_Digits(3, i) & ".ics"
+      	Loop
+      	
+      	iCAL_CreateUniqueFileName = FNAME
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetStatusDescription:1:8
+      Function iCAL_GetStatusDescription () As String
+      '================================================
+      	Dim msg$
+      	
+      	Select Case i_NoticeType
+      		
+      	Case iCAL_MSGTYPE_CONFIRMATION, iCAL_MSGTYPE_ACCEPT, iCAL_MSGTYPE_COUNTERACCEPT
+      		msg = "ACCEPTED"
+      		
+      	Case iCAL_MSGTYPE_CANCEL, iCAL_MSGTYPE_REJECT, iCAL_MSGTYPE_COUNTERREJECT
+      		msg = "DECLINED"
+      		
+      	Case iCAL_MSGTYPE_PENCILIN
+      		msg = "TENTATIVE"
+      		
+      	Case iCAL_MSGTYPE_DELEGATING, iCAL_MSGTYPE_DELEGATE
+      		msg = "DELEGATED"
+      		
+      	Case iCAL_MSGTYPE_COMPLETED
+      		msg = "COMPLETED"
+      		
+      	Case Else
+      		msg = "NEEDS-ACTION"
+      	End Select
+      	
+      	iCAL_GetStatusDescription = msg
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_RepeatGetRelativeCountValue:1:8
+      Function iCAL_RepeatGetRelativeCountValue () As Integer
+      '================================================
+      	Dim relcnt%
+      	Select Case iCAL_GetItemText("RepeatUnit")
+      	Case "YD"
+      		Select Case iCAL_GetItemText("RepeatForUnit")
+      		Case "YD"
+      			relcnt = 1
+      		Case Else
+      			relcnt = 0
+      		End Select
+      	Case "MD"
+      		Select Case iCAL_GetItemText("RepeatForUnit")
+      		Case "YD"
+      			relcnt = 12
+      		Case "MD"
+      			relcnt = 1
+      		Case "MP"
+      			relcnt = 1
+      		Case Else
+      			relcnt = 0
+      		End Select
+      	Case "MP"
+      		Select Case iCAL_GetItemText("RepeatForUnit")
+      		Case "YD"
+      			relcnt = 12
+      		Case "MD"
+      			relcnt = 1
+      		Case "MP"
+      			relcnt = 1
+      		Case Else
+      			relcnt = 0
+      		End Select
+      	Case "W"
+      		Select Case iCAL_GetItemText("RepeatForUnit")
+      		Case "YD"
+      			relcnt = 52
+      		Case "MD"
+      			relcnt = 4
+      		Case "MP"
+      			relcnt = 4
+      		Case "W"
+      			relcnt = 1
+      		Case Else
+      			relcnt = 0
+      		End Select
+      	Case "D"
+      		Select Case iCAL_GetItemText("RepeatForUnit")
+      		Case "YD"
+      			relcnt = 365
+      		Case "MD"
+      			relcnt = 30
+      		Case "MP"
+      			relcnt = 30
+      		Case "W"
+      			relcnt = 7
+      		Case "D"
+      			relcnt = 1
+      		End Select
+      	End Select
+      	iCAL_RepeatGetRelativeCountValue = relcnt
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetITIPMethod:1:8
+      Function iCAL_GetITIPMethod () As String
+      '================================================
+      	Dim msg$
+      	msg = ""
+      	
+      	Select Case i_NoticeType
+      		
+      	'--- ORIGINATOR MESSAGE
+      		
+      	Case iCAL_MSGTYPE_ADDCALENDAR
+      		msg = "PUBLISH"
+      		
+      	Case iCAL_MSGTYPE_INVITE, iCAL_MSGTYPE_STATUSUPDATE, iCAL_MSGTYPE_PENCILIN
+      		msg = "REQUEST"
+      		
+      	Case iCAL_MSGTYPE_RESCHEDULE, iCAL_MSGTYPE_DELEGATE, iCAL_MSGTYPE_STATUSREQUIRED, iCAL_MSGTYPE_REMOVED
+      		msg = "REQUEST"
+      		
+      	Case iCAL_MSGTYPE_CONFIRMATION
+      		msg = "REQUEST"
+      		
+      	Case iCAL_MSGTYPE_CANCEL
+      		msg = "CANCEL"
+      		
+      		
+      		
+      	'--- RESPONSES
+      		
+      	Case iCAL_MSGTYPE_ACCEPT, iCAL_MSGTYPE_REJECT, iCAL_MSGTYPE_DELEGATING, iCAL_MSGTYPE_COMPLETED, iCAL_MSGTYPE_COUNTERACCEPT
+      		msg = "REPLY"
+      		
+      	Case iCAL_MSGTYPE_COUNTER
+      		msg = "COUNTER"
+      		
+      	Case iCAL_MSGTYPE_REFRESHINFO
+      		msg = "REFRESH"
+      		
+      	Case iCAL_MSGTYPE_COUNTERREJECT
+      		msg = "DECLINECOUNTER"
+      		
+      	End Select
+      	
+      	iCAL_GetITIPMethod = msg
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_Print:1:8
+      Sub iCAL_Print (vProperty$, vValue$)
+      '================================================
+      	On Error Resume Next
+      	
+      	If (Len(vValue) > 0 And Len(vProperty) > 0) Then
+      		
+      		' Escape a few common items in the Value
+      		vValue = iCAL_Escape("\", vValue)
+      		vValue = iCAL_Escape(",", vValue)
+      		vValue = iCAL_Escape(";", vValue)
+      		
+      		' Print the Prop/Val pair
+      		iCAL_Put vProperty, vValue
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetFriendlyText:1:8
+      Function iCAL_GetFriendlyText () As String
+      '================================================
+      	Dim fld$, msg$, nl$
+      	nl = Chr$(13) & Chr$(10)
+      	
+      	'--- Append Friendly Message
+      	fld = iCAL_GetFriendlyDescription
+      	msg = fld & nl & nl
+      	
+      	'--- Append Start Time
+      	fld = Format(i_FriendlyDate, "Medium Time") & " on " & Format(i_FriendlyDate, "Long Date")
+      	If (iCAL_MSGTYPE_COUNTER = i_NoticeType) Then
+      		fld = "Proposed date:	  " & Chr(9) & fld
+      	Else
+      		fld = "When:	 " & Chr(9) & fld
+      	End If
+      	msg = msg & fld & nl
+      	
+      	'--- Append Location
+      	fld = iCAL_GetItemText("Location")
+      	If (Len(fld) = 0) Then fld = iCAL_GetItemText("Room")
+      	If (Len(fld) > 0) Then 
+      		If (iCAL_MSGTYPE_COUNTER = i_NoticeType) Then
+      			fld = "Proposed location: " & Chr(9) & fld
+      		Else
+      			fld = "Where:	  " & Chr(9) & fld
+      		End If
+      		msg = msg & fld & nl
+      	End If
+      	
+      	'--- Append Subject
+      	fld = iCAL_GetItemText("Topic")
+      	If (0 = Len(fld)) Then fld = iCAL_GetItemText("Subject")
+      	If ("VTODO" = iCAL_GetCalType) Then
+      		fld = "Assignment:" & Chr(9) & fld
+      	Else
+      		fld = "Subject:	" & Chr(9) & fld
+      	End If
+      	msg = msg & fld & nl
+      	
+      	
+      	'--- Fancy Line
+      	fld = String(70,"*")
+      	msg = msg & nl & fld & nl
+      	
+      	'--- Append Friendly Message
+      	fld = "This iCalendar message was created by IBM Notes." & nl & _
+      	"To add this capability to your Notes client, visit the Iris" & nl & _ 
+      	"SandBox on http://www.notes.net"
+      	msg = msg & fld & nl & nl
+      	fld = "Use your favorite calendaring & scheduling application" & nl & _
+      	"to open the attached iCalendar file."
+      	msg = msg & fld & nl
+      	
+      	'--- Fancy Line
+      	fld = String(70,"*")
+      	msg = msg & fld & nl & nl
+      	
+      	iCAL_GetFriendlyText = msg
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_GetRFC822Email:1:8
+      Function iCAL_GetRFC822Email( nn As NotesName ) As String
+      	Dim RFC822$
+      	If Not (gLookup Is Nothing) Then
+      		RFC822 = gLookup.GetRFC822Email( nn.Canonical )
+      	End If
+      	If (0=Len(RFC822)) Then
+      		RFC822 = Lcase(iCAL_NoSpace(nn.Common & "@" & nn.Organization & ".com"))
+      	End If
+      	iCAL_GetRFC822Email = RFC822
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_IsFromChair:1:8
+      Function iCAL_IsFromChair () As Integer
+      '================================================
+      	Dim rtn%
+      	rtn = False
+      	
+      	If ("VEVENT" = iCAL_GetCalType) Then
+      		Select Case i_NoticeType
+      			Case iCAL_MSGTYPE_INVITE, iCAL_MSGTYPE_CONFIRMATION, iCAL_MSGTYPE_CANCEL, _
+      			iCAL_MSGTYPE_STATUSUPDATE, iCAL_MSGTYPE_PENCILIN, iCAL_MSGTYPE_RESCHEDULE, _
+      		iCAL_MSGTYPE_ADDCALENDAR, iCAL_MSGTYPE_COUNTERREJECT
+      			rtn = True
+      		End Select
+      	End If
+      	If ("VTODO" = iCAL_GetCalType) Then
+      		Select Case i_NoticeType
+      			Case iCAL_MSGTYPE_INVITE, iCAL_MSGTYPE_CONFIRMATION, _
+      		iCAL_MSGTYPE_CANCEL, iCAL_MSGTYPE_RESCHEDULE
+      			rtn = True
+      		End Select
+      	End If
+      	
+      	iCAL_IsFromChair = rtn
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_RepeatUnit:1:8
+      Function iCAL_RepeatUnit () As String
+      '================================================
+      	Select Case iCAL_GetItemText("RepeatUnit")
+      	Case "YD"
+      		iCAL_RepeatUnit = "YEARLY"
+      	Case "MD"
+      		iCAL_RepeatUnit = "MONTHLY"
+      	Case "MP"
+      		iCAL_RepeatUnit = "MONTHLY"
+      	Case "W"
+      		iCAL_RepeatUnit = "WEEKLY"
+      	Case "D"
+      		iCAL_RepeatUnit = "DAILY"
+      	Case "C"
+      		Exit Function
+      	End Select
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_RepeatCount:1:8
+      Function iCAL_RepeatCount () As Integer
+      '================================================
+      	Dim count%
+      	count = Val(iCAL_GetItemText("RepeatFor"))
+      	
+      	'--- Adjust if units are not equal
+      	If Not (iCAL_GetItemText("RepeatForUnit") = iCAL_GetItemText("RepeatUnit")) Then
+      		count = count * iCAL_RepeatGetRelativeCountValue
+      	End If
+      	
+      	'--- Return Total Count
+      	iCAL_RepeatCount = count
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_NewLine:1:8
+      Function iCAL_NewLine (Txt$) As String
+      '================================================
+      	Dim i%, j%, nlen%
+      	Dim NL(0 To 1) As String
+      	If (0 = Len(Txt)) Then Exit Function
+      	
+      	NL(0) = Chr$(13) & Chr$(10)
+      	NL(1) = Chr$(13)
+      	
+      	For j=0 To 1
+      		nlen = Len(NL(j))
+      		i = Instr(1, Txt, NL(j), 0)
+      		Do While (i > 0)
+      			Txt = Left(Txt, i - 1) & "\n" & Mid$(Txt, i + nlen)
+      			i = Instr(i + nlen, Txt, NL(j), 0)
+      		Loop
+      	Next j
+      	iCAL_NewLine = Txt
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_SetNoticeType:1:8
+      Sub iCAL_SetNoticeType(Action As Long)
+      '================================================
+      	If ((Action And iCAL_TYPE_ACCEPT) = iCAL_TYPE_ACCEPT) Then
+      		i_NoticeType = iCAL_MSGTYPE_ACCEPT
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_ADDTOCALENDAR) = iCAL_TYPE_ADDTOCALENDAR) Then
+      		i_NoticeType = iCAL_MSGTYPE_ADDCALENDAR
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_CANCEL) = iCAL_TYPE_CANCEL) Then
+      		i_NoticeType = iCAL_MSGTYPE_CANCEL
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_COMPLETED) = iCAL_TYPE_COMPLETED) Then
+      		i_NoticeType = iCAL_MSGTYPE_COMPLETED
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_CONFIRMATION) = iCAL_TYPE_CONFIRMATION) Then
+      		i_NoticeType = iCAL_MSGTYPE_CONFIRMATION
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_COUNTER) = iCAL_TYPE_COUNTER) Then
+      		i_NoticeType = iCAL_MSGTYPE_COUNTER
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_DECLINE) = iCAL_TYPE_DECLINE) Then
+      		i_NoticeType = iCAL_MSGTYPE_REJECT
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_DELEGATE) = iCAL_TYPE_DELEGATE) Then
+      		i_NoticeType = iCAL_MSGTYPE_DELEGATE
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_REFRESHINFO) = iCAL_TYPE_REFRESHINFO) Then
+      		i_NoticeType = iCAL_MSGTYPE_REFRESHINFO
+      		Exit Sub
+      	End If
+      	If ((Action And iCAL_TYPE_RESCHEDULE) = iCAL_TYPE_RESCHEDULE) Then
+      		i_NoticeType = iCAL_MSGTYPE_RESCHEDULE
+      		Exit Sub
+      	End If
+      	
+      	'--- INVITE must be last, since it is defined to be 4, a value
+      	'	 which all Actions contain
+      	If ((Action And iCAL_TYPE_INVITE) = iCAL_TYPE_INVITE) Then
+      		If ("1" = iCAL_GetItemText("OrgRepeat")) Then
+      			i_NoticeType = iCAL_MSGTYPE_ADDCALENDAR
+      		Else
+      			i_NoticeType = iCAL_MSGTYPE_INVITE
+      		End If
+      		Exit Sub
+      	End If
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_Fold:1:8
+      Function iCAL_Fold(Txt$) As String
+      '================================================
+      	Dim tmp$, qtmp$
+      	Dim tlen%, tbegin%, tcut%, qual%
+      	On Error Resume Next
+      	
+      	tmp = ""
+      	tlen = Len(Txt)
+      	tbegin = 1
+      	
+      	Do While ((tlen - tbegin) > 72)
+      		' Do not separate the \n !!!
+      		If ("\n" = Lcase(Mid$(Txt, tbegin + 71, 2))) Then
+      			tcut = 73
+      		Else
+      			tcut = 72
+      		End If
+      		
+      		' Do not separate a property qualifier
+      		qtmp = Mid$(Txt, tbegin, tcut)
+      		qual = Instr(1, qtmp, ":", 0)
+      		If (qual = 0) And (Len(qtmp) >= 72) Then
+      			qual = Instrr(qtmp, ";")
+      			If (qual > 0) Then tcut = qual
+      		End If
+      		
+      		tmp = tmp & Mid$(Txt, tbegin, tcut) & Chr$(13) & Chr$(10) & " "
+      		tbegin = tbegin + tcut
+      	Loop
+      	
+      	iCAL_Fold = tmp & Mid$(Txt, tbegin)
+      End Function
+      
+      '++LotusScript Development Environment:2:1:iCAL_Escape:1:8
+      Function iCAL_Escape (Char$, Txt$) As String
+      '================================================
+      	Dim i%
+      	On Error Goto ERROR_ESCAPE
+      	If (0 = Len(Txt)) Then Exit Function
+      	i = Instr(1, Txt, Char, 0)
+      	Do While (i>0)
+      		If ("\n" = Lcase(Mid$(Txt, i, 2))) Then
+      			'Skip
+      			i = Instr(i+2, Txt, Char, 0)
+      		Else
+      			Txt = Left(Txt, i - 1) & "\" & Mid(Txt, i)
+      			i = Instr(i+2, Txt, Char, 0)
+      		End If
+      	Loop
+      	Goto EXIT_ESCAPE
+      	
+      ERROR_ESCAPE:
+      	iCAL_Status "Escape: " & Error
+      	Resume EXIT_ESCAPE
+      	
+      EXIT_ESCAPE:
+      	iCAL_Escape = Txt
+      End Function
+      
+      '++LotusScript Development Environment:2:2:iCAL_PrintRepeatInfo:1:8
+      Sub iCAL_PrintRepeatInfo ()
+      '================================================
+      	Dim Zdates$
+      	Dim DocExists%, CheckIDs%
+      	Dim dates As Variant
+      	Dim NoteUNID As Variant
+      	Dim semi%, parm%, x%
+      	Dim noteTmp As NotesDocument
+      	On Error Resume Next
+      	
+      	'--- Only print custom dates for now
+      	
+      	'--- Rule Or Date ?
+      	If (0 = Len(iCAL_GetItemText("RepeatDates"))) And (0 = Len(iCAL_GetItemText("RepeatInstanceDates"))) And (0 = Len(iCAL_GetItemText("RepeatCustom"))) Then
+      		iCAL_PrintRepeatRule
+      		Exit Sub
+      	End If
+      	
+      	'--- Get a list of dates
+      	If (Len(iCAL_GetItemText("RepeatCustom")) > 0) Then
+      		dates	 = i_Note.GetItemValue("RepeatCustom")
+      	End If
+      	If (Len(iCAL_GetItemText("RepeatInstanceDates")) > 0) Then
+      		dates	 = i_Note.GetItemValue("RepeatInstanceDates")
+      	End If
+      	If (Len(iCAL_GetItemText("RepeatDates")) > 0) Then
+      		dates	 = i_Note.GetItemValue("RepeatDates")
+      	End If
+      	
+      	'--- Get a list of IDs
+      	CheckIDs = False
+      	If (Len(iCAL_GetItemText("RepeatIDs")) > 0) Then
+      		NoteUNID = i_Note.GetItemValue("RepeatIDs")
+      		CheckIDs = True
+      	End If
+      	
+      	
+      	x = 0
+      	Forall dt In dates
+      		
+      		'--- Does the event exist?
+      		DocExists = True
+      		If (True = CheckIDs) Then
+      			Set noteTmp = i_MailDB.GetDocumentByUNID(NoteUNID(x))
+      			If (noteTmp Is Nothing) Then DocExists = False
+      		End If
+      		
+      		If (True = DocExists) Then
+      			'--- Convert date to a Z date
+      			Zdates = Zdates & "," & iCAL_DateToZString(dt)
+      		End If
+      		x = x + 1
+      	End Forall
+      	
+      	'--- Trim Comma From Beginning
+      	Do While ("," = Left(Zdates, 1)) 
+      		Zdates = Mid(Zdates, 2)
+      	Loop
+      	
+      	'--- Print Custom RDATEs
+      	iCAL_Put "RDATE", Zdates
+      End Sub
+      
+      '++LotusScript Development Environment:2:1:iCAL_AddAttendeeList:1:8
+      Function iCAL_AddAttendeeList () As Integer
+      '================================================
+      	If (True = iCAL_IsFromChair) And Not (iCAL_MSGTYPE_ADDCALENDAR = i_NoticeType) Then
+      		iCAL_AddAttendeeList = True
+      	Else
+      		iCAL_AddAttendeeList = False
+      	End If
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: iCalendarExport
+    signed: true
+remaining: []

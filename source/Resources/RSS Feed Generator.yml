@@ -1,0 +1,83 @@
+---
+class: 32784
+flags: 0x0000
+unid: OF39A08320A7E348DF-ON004E1F03852564C1
+items:
+  - name: $Daos
+    type: text
+    data: "0"
+  - name: $DefaultFrameset
+    type: text
+    data: Frameset3Frames
+    signed: true
+  - name: $DefaultWebFrameset
+    type: text
+    data: Frameset3Frames
+    signed: true
+  - name: $DefaultWebLaunchPage
+    type: text
+    data: homepage
+  - name: $Flags
+    type: text
+    data: fFE7
+  - name: $FlagsNoRefresh
+    type: text
+    data: ""
+  - name: $LANGUAGE
+    type: text
+    data: en
+  - name: $Revisions
+    type: time
+    data:
+      - data: "2012-10-30T10:38:06.50-04:00"
+        dst: true
+      - data: "2012-10-30T10:38:06.54-04:00"
+        dst: true
+      - data: "2012-10-30T10:38:06.56-04:00"
+        dst: true
+      - data: "2012-10-30T10:38:21.94-04:00"
+        dst: true
+  - name: $RevisionsLimit
+    type: number
+    data: 0
+    signed: true
+  - name: $SoftDeleteExpireHours
+    type: number
+    data: 48
+    signed: true
+  - name: $TITLE
+    type: text
+    data: |
+      RSS Feed Generator
+      #1RSS Generator Template
+  - name: $TemplateFileName
+    type: text
+    data: "CN=ravel/O=DAO!!RSS\\compress\\Signed\\rss_generator.ntf"
+  - name: $TemplateModTime
+    type: time
+    data: "2006-06-14T09:47:13.91-04:00"
+    dst: true
+  - name: $TemplateServerName
+    type: text
+    data: CN=Nancy McGehee/OU=Portsmouth/O=IBM
+  - name: $UpdatedByLimit
+    type: number
+    data: 0
+    signed: true
+  - name: IconBitmap
+    type_num: 6
+    type: opaque
+    opaque: |
+      AiAgAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAD8yMH////yIozMzMzMj//47Mgf8R//8iKMzMzMzJ///OyOHx7h//4oyczMzMzO
+      //7sgR/4gf//jMzMzJDMzv/+7MHx6IH//4zMzMzAzMz//+zh8YiPH//MzAzMycwC///s4fGIjx//+MzM
+      zMyMIv//7OH/yI4f//ycwMzMgiL//+zBH/iIH//yKMwMzILP///iwR/8iB///CIiwJDv////8s8R//4f
+      //8s7/////8f//IsER/xH//////////////yIs8REf//////////////8iIiz///////////7u4A7/Ii
+      IiIs4f////7gAAAO///yIiIiLMH//+AAAA7v///+8iIiIiLB/uDu7v/////sIvIiIiIiIe//8f///+zC
+      IiLyIiIiIizv///uzCIiIiIi8iIiIiIiIiIiIiIiIiIiIvIiIizCIswiwiIizCLMzMLyIi8fwvES8fIi
+      IRxhERHy8iIi8fwRwvHyLMEcYR//YvIiIiERHyLx/B/BHGH8IiLyIiImERwi8f8RwRxh/CIi8iIiLhH8
+      IvHx8fEcYfwiIvIiIiERH8LxEc8RHGH8IiLyIiLx8hHM8R8iERxh/CIi8iIvESJhEvEWIvESYfIiIvIi
+      IiIiIiIiIiIiIiIiIiLyIiIiIiIiIiIiIiIiIiIiH////////////////////w==
+    signed: true
+remaining: []

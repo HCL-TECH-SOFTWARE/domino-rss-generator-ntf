@@ -1,0 +1,246 @@
+---
+class: 512
+flags: 0x2000
+unid: OFA7D0419D925AF900-ON00729D6F852570C8
+items:
+  - name: $AssistAction
+    type: action
+    code_type: 65413
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      Use "RssLibrary"
+      Use "vCardExport"
+      Use "iCalendarExport"
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Sub Initialize
+      Declare Sub RunAgent( ns As NotesSession, sEntryID$, bCache% )
+      Declare Function GetSourceDatabase( sRepID$ ) As Variant
+      Declare Sub GenerateVersitInfo( verDoc, srcDoc )
+      Declare Function GetVersitUnid( ns As NotesSession, sEntryID$ ) As String
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'versit: 
+      
+      Const L_Err_DbOpen$ = "Database cannot be opened: "
+      Const L_Err_DocOpen$ = "Document cannot be opened: "
+      
+      
+      '++LotusScript Development Environment:2:2:Initialize:1:10
+      Sub Initialize
+      	Dim ns As New NotesSession
+      	Dim oQuery As New CGIParser( ns.DocumentContext )
+      	Dim sParm$, sSave$
+      	
+      	'// Validate the query
+      	sParm = oQuery.GetCGI(D_CGI_Versit)
+      	If (49<>Len(sParm)) Then
+      		sParm = oQuery.GetCGI(D_CGI_VersitAlt)	' user may have copy & pasted the url from the browser UI, rather than from the source XML
+      		If (49<>Len(sParm)) Then
+      			Print "Invalid uid: " & sParm
+      			Exit Sub
+      		End If
+      	End If
+      	
+      	sSave = oQuery.GetCGI(D_CGI_Cache)
+      	If (0=Len(sSave)) Then
+      		sSave = oQuery.GetCGI(D_CGI_CacheAlt)
+      		If (0<>Len(sSave)) Then
+      			sSave = "0"
+      		End If
+      	End If
+      	
+      	Call RunAgent( ns, Ucase(sParm), ("0"<>sSave) )
+      End Sub
+      '++LotusScript Development Environment:2:2:RunAgent:1:8
+      Sub RunAgent( ns As NotesSession, sEntryID$, bCache% )
+      	Dim verDoc
+      	Dim srcDoc As NotesDocument
+      	Dim srcDb As NotesDatabase
+      	Dim bReplace%, h%
+      	Dim sRepID$, sDocID$
+      	
+      	'// ======================================================
+      	'// Plan of action:
+      	'//	open database ReplicaID specified
+      	'//	open note
+      	'//	1. if versit doc is not available, create it
+      	'//	2. else if versit doc LastMod is less than source doc LastMod, recreate it
+      	'//	3. send versit doc to client
+      	'// ======================================================
+      	
+      	'// Open source database
+      	sRepID = Left( sEntryID, 16 )
+      	Set srcDb = GetSourceDatabase( sRepID )
+      	If (srcDb Is Nothing) Then
+      		Print L_Err_DbOpen &sRepID
+      		Exit Sub
+      	End If
+      	
+      	'// Open source doc
+      	sDocID = Right( sEntryID, 32)
+      	Set srcDoc = srcDb.GetDocumentByUNID( sDocID )
+      	If (srcDoc Is Nothing) Then
+      		Print L_Err_DocOpen & sDocID
+      		Exit Sub
+      	End If
+      	
+      	'// Find versit doc
+      	sDocID = GetVersitUnid( ns, sEntryID )
+      	If (32=Len(sDocID)) Then
+      		Set verDoc = ns.CurrentDatabase.GetDocumentByUNID( sDocID )
+      	Else
+      		Set verDoc = Nothing
+      	End If
+      	If (verDoc Is Nothing) Then
+      		Set verDoc = ns.CurrentDatabase.CreateDocument()
+      		Call verDoc.AppendItemValue("Form", "VersitObject")
+      		Call verDoc.AppendItemValue("$EntryID", sEntryID)
+      		bReplace = True
+      	Else
+      		bReplace = (verDoc.LastModified < srcDoc.LastModified )
+      	End If
+      	
+      	'// Regenerate versit info
+      	If (True=bReplace) Then
+      		Call GenerateVersitInfo( verDoc, srcDoc )
+      		If (True=bCache) Then 
+      			Call verDoc.Save(True, False)
+      		End If
+      	End If
+      	
+      	'// Send versit info to client <do not translate>
+      	Print "Content-Type: " & verDoc.GetItemValue("$EntryType")(0)
+      	Print "Last-Modified: " & ToRssDate(verDoc.LastModified)
+      	Print Chr(13)
+      	Forall v In verDoc.GetItemValue("$EntryVersit")
+      		If (v>"") Then
+      			Print v
+      		End If
+      	End Forall
+      End Sub
+      '++LotusScript Development Environment:2:1:GetSourceDatabase:1:8
+      Function GetSourceDatabase( sRepID$ ) As Variant
+      	Dim ndb As New NotesDatabase("","")
+      	On Error Resume Next
+      	
+      	Call ndb.OpenByReplicaID("",sRepID)
+      	If (ndb Is Nothing) Then
+      		Exit Function
+      	End If
+      	Set GetSourceDatabase = ndb
+      End Function
+      '++LotusScript Development Environment:2:2:GenerateVersitInfo:1:8
+      Sub GenerateVersitInfo( verDoc, srcDoc )
+      	'// this is the meat of the application
+      	'	put text/calendar or text/directory into $EntryType
+      	'	put icalendar or vcard into $EntryVersit, which allows multiple values
+      	Select Case Lcase( srcDoc.GetItemValue("Form")(0) )
+      	Case "person"
+      		Call verDoc.ReplaceItemValue("$EntryType", "text/directory")
+      		Call vCard_ExportToDocument(srcDoc, verDoc, "$EntryVersit") 
+      	Case "appointment"
+      		Call verDoc.ReplaceItemValue("$EntryType", "text/calendar")
+      		Call iCAL_ExportToDocument(srcDoc, verDoc, "$EntryVersit") 
+      	End Select
+      End Sub
+      '++LotusScript Development Environment:2:1:GetVersitUnid:1:8
+      Function GetVersitUnid( ns As NotesSession, sEntryID$ ) As String
+      	Dim nve As NotesViewEntry
+      	On Error Resume Next
+      	Set nve = ns.CurrentDatabase.GetView("ByEntryID").GetEntryByKey(sEntryID, True)
+      	If (nve Is Nothing) Then
+      		Exit Function
+      	End If
+      	GetVersitUnid = nve.UniversalID
+      End Function
+    dwFlags: 0x00000000
+    signed: true
+    nonsummary: true
+  - name: $AssistDocCount
+    type: number
+    data: 0
+    signed: true
+  - name: $AssistFlags
+    type: text
+    data: EHu
+    signed: true
+  - name: $AssistInfo
+    type_num: 17
+    type: opaque
+    opaque: |
+      AQAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistLastRun
+    type: time
+    signed: true
+  - name: $AssistQuery
+    type_num: 15
+    type: opaque
+    opaque: gQYAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistRunInfo
+    type: object
+    obj_type: 0x0008
+    obj_class: 0x0200
+    obj_privs: 0x0000
+    opaque: |
+      AAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      WGJVAE9xJYV9iGgAM3ElhQAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqq
+  - name: $AssistTrigger
+    type: text
+    data: "4"
+    signed: true
+  - name: $AssistType
+    type: number
+    data: 65413
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "6.5"
+    signed: true
+  - name: $Flags
+    type: text
+    data: fLu3n
+  - name: $FlagsExt
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $Restricted
+    type: number
+    data: 1
+    signed: true
+  - name: $TITLE
+    type: text
+    data: (versit)
+    signed: true
+remaining: []

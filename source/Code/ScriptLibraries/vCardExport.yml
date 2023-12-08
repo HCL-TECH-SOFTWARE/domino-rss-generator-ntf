@@ -1,0 +1,1043 @@
+---
+class: 512
+flags: 0x2000
+unid: OFB89762191039794F-ON00559836852570CA
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      Use "vCardCommon"
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Function vCard_ExportToFile (srcDoc, OverrideFileName$) As String
+      Declare Function vCard_ExportToDocument(srcDoc, outDoc, sOutputFieldName$) As Integer
+      Declare Function VCC_ODOA () As String
+      Declare Function VCC_RTrim( ch$, txt$ ) As String
+      Declare Function VCC_ReadContact (nd, vc As VCF) As Integer
+      Declare Function VCC_PrintToFile (OverrideFileName$, otherTels%, vc As VCF) As String
+      Declare Function VCC_Fold (LB$, txt$) As String
+      Declare Function VCC_ReplaceLineBreak (LB$, txt$) As String
+      Declare Function VCC_FindEmailString(txt$) As String
+      Declare Function VCC_FormatEMailString (txt$) As String
+      Declare Function VCC_IsNotesMail(txt$) As Integer
+      Declare Function VCC_GetBasicEMail(txt$) As String
+      Declare Function VCC_GetType(txt$) As String
+      Declare Function VCC_Escape(txt$) As String
+      Declare Sub VCC_SetPreferredvCard (vCardPath$) 
+      Declare Function VCC_GetPreferredvCard () As String
+      Declare Sub VCC_PromptForPreferredvCard
+      Declare Function VCC_GetUserEmail () As String
+      Declare Function VCC_GenerateOutput( vc As VCF, otherTels% ) As Variant
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'vCardExport: 
+      
+      'vCardExport: 
+      
+      
+      
+      '  =====================================================================
+      '
+      '  (C) Copyright 1999, Lotus Development Corporation.
+      '
+      '  By accessing and installing the Software, you indicate your
+      '  acceptance of this License.
+      '
+      '  Lotus Development Corporation "Licensor", hereby grants you a
+      '  nonexclusive, royalty-free, world-wide right and license under any
+      '  Licensor copyrights in the Software to copy and modify the Software
+      '  for personal, non-commercial use only. Any other use is prohibited.
+      '  Licensor expressly reserves all other rights, including patent rights,
+      '  that it may have in the Software. Ownership and title to the Software
+      '  and its source code shall remain at all times with Licensor.
+      '  You agree to reproduce Licensor copyright notice in any derivative
+      '  works of the Software created by you. You may not decompile,
+      '  disassemble or reverse engineer the Software, nor may you disclose
+      '  any trade secret information contained in the Software.
+      '
+      '  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTY, AND
+      '  LICENSOR SHALL HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
+      '  UPDATES, ENHANCEMENTS OR MODIFICATIONS.
+      
+      '  IN NO EVENT SHALL LICENSOR BE LIABLE TO ANY PARTY FOR DIRECT,
+      '  INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOST PROFITS ARISING
+      '  OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY
+      '  OF SUCH DAMAGE.
+      '
+      '  LICENSOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, EXPRESS OR IMPLIED,
+      '  INCLUDING BUT NOT LIMITED TO ANY WARRANTY OF NONINFRINGEMENT OR THE
+      '  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+      '  PURPOSE.
+      '
+      '  The software is provided with RESTRICTED RIGHTS.  Use, duplication,
+      '  or disclosure by the government are subject to restrictions set forth
+      '  in DFARS 252.227-7013 or 48 CFR 52.227-19, as applicable.
+      '
+      '  =====================================================================
+      
+      Dim m_NL$
+      
+      
+      
+      
+      
+      
+      '++LotusScript Development Environment:2:1:vCard_ExportToFile:2:8
+      '==================================================
+      Function vCard_ExportToFile (srcDoc, OverrideFileName$) As String
+      '==================================================
+         '   Main Entry  Function
+         '  filename can be blank.  if not, then filename is used.
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim vc As VCF
+      	Dim NewVC$
+      	Dim tels%
+      	
+      	NewVC = ""
+      	If (srcDoc Is Nothing) Then
+      		Exit Function
+      	End If
+      	
+            '--- Initialize
+      	VC_StartNotesSession
+      	
+            '--- Create vCard
+      	tels  = VCC_ReadContact(srcDoc, vc)
+      	NewVC = VCC_PrintToFile(OverrideFileName, tels, vc)
+      	
+      	vCard_ExportToFile = NewVC
+      End Function
+      '++LotusScript Development Environment:2:1:vCard_ExportToDocument:2:8
+      '==================================================
+      Function vCard_ExportToDocument(srcDoc, outDoc, sOutputFieldName$) As Integer
+      '==================================================
+         '   Main Entry  Function
+      	'On Error Resume Next
+      	Dim vc As VCF
+      	Dim nTels%, h%
+      	
+      	If (srcDoc Is Nothing) Or (outDoc Is Nothing) Then
+      		Exit Function
+      	End If
+      	
+            '--- Initialize
+      	VC_StartNotesSession
+      	
+            '--- Create vCard
+      	nTels  = VCC_ReadContact( srcDoc, vc )
+      	Call outDoc.ReplaceItemValue( sOutputFieldName, VCC_GenerateOutput( vc, nTels ) )
+      	
+      	vCard_ExportToDocument = h
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_ODOA:2:8
+      '==================================================
+      Function VCC_ODOA () As String
+      '==================================================
+      	If (0=Len(m_NL)) Then
+      		m_NL = Chr(13) & Chr(10)
+      	End If
+      	VCC_ODOA = m_NL
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_RTrim:2:8
+      '==================================================
+      Function VCC_RTrim( ch$, txt$ ) As String
+      '==================================================
+         '   Trim the input ch$ from the right side of txt$
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim tmp$
+      	tmp = txt
+      	Do While (ch$ = Right(tmp, 1))
+      		tmp = Left(tmp, Len(tmp) -1)
+      		If (0=Len(tmp)) Then Exit Do
+      	Loop
+      	VCC_RTrim = tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_ReadContact:2:8
+      '==================================================
+      Function VCC_ReadContact (nd, vc As VCF) As Integer
+      '==================================================
+         '   This  Function examine all of the fields in the 
+         '   local contact selected
+         '   RETURNS:  the number of other phones
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim i%, inS%, other%
+      	Dim NotesPhoneField(1 To 6) As String
+      	Dim NotesPhoneLabel(1 To 6) As String
+      	Dim tmp$, LB$
+      	Dim dtNow As Variant, cmt As Variant
+      	Dim ndtNow As New NotesDateTime("")
+      	Dim FullName As NotesName
+      	
+         'INITIALIZE PHONE FIELDS
+      	other = MAX_TEL + 1
+      	NotesPhoneField(1) = "OfficePhoneNumber"
+      	NotesPhoneField(2) = "PhoneNumber"
+      	NotesPhoneField(3) = "OfficeFAXPhoneNumber"
+      	NotesPhoneField(4) = "HomeFAXPhoneNumber"
+      	NotesPhoneField(5) = "CellPhoneNumber"
+      	NotesPhoneField(6) = "PhoneNumber_6"
+      	
+         'INITIALIZE ENCODING SCHEME
+      	If ("3.0" = VC_GetVersion) Then
+      		LB = ENC_NL
+      	Else
+      		LB = ENC_QP
+      	End If
+      	
+         'UNIVERSAL ID 
+      	If (True = nd.HasItem("VID")) Then
+      		vc.VID = VC_GetItemText(nd, "VID")
+      	Else
+      		vc.VID = VC_CreateUID( nd )
+      		nd.VID = vc.VID
+      		Call nd.Save(True, False, True)
+      	End If
+      	
+         'CREATION DATE
+      	Call ndtNow.SetNow
+      	dtNow = ndtNow.LSGMTTime
+      	vc.vDateCreated = Format(dtNow, "YYYYMMDD") & "T" & Format(dtNow, "HHMMSS") & "Z"
+      	
+      	
+         'PERSONAL Informantion
+      	vc.N(1) = VC_GetItemText(nd, "LastName")
+      	vc.N(2) = VC_GetItemText(nd, "FirstName")
+      	vc.N(3) = VC_GetItemText(nd, "MiddleInitial")
+      	vc.N(4) = VC_GetItemText(nd, "Title")
+      	vc.N(5) = VC_GetItemText(nd, "Suffix")
+      	Set FullName = New NotesName( VC_GetItemText(nd, "FullName") )
+      	vc.FN = Trim(FullName.Common)
+      	vc.Birthday = VC_GetVDateFromNotesItem(nd.GetFirstItem("Birthday"))
+      	
+         'BUSINESS Information
+      	vc.Org(1) = VC_GetItemText(nd, "CompanyName")
+      	vc.Org(2) = VC_GetItemText(nd, "Department")
+      	vc.JobTitle = VC_GetItemText(nd, "JobTitle")
+      	vc.Assistant = VC_GetItemText(nd, "Assistant")
+      	vc.Categories = VC_GetItemText(nd, "Categories")
+      	Set cmt = nd.GetFirstItem("Comment")
+      	If (RICHTEXT = cmt.Type) Then
+      		vc.Note = cmt.GetFormattedText(False, 60)
+      	Else
+      		vc.Note = cmt.Text
+      	End If
+      	vc.URL = VC_GetItemText(nd, "WebSite")
+      	
+         'ENSURE FORMATTED NAME EXISTS
+      	If (0 = Len(vc.FN)) Then
+      		If (0 = Len(vc.N(1)) And 0 = Len(vc.N(2))) Then
+      			If (0 = Len(vc.Org(1))) Then
+                  ' EXIT !!  No Formatted Name !!
+      				Goto EXIT_READ_CONTACT
+      			Else
+      				vc.FN = vc.Org(1)
+      			End If
+      		Else
+      			vc.FN = vc.N(2) & " " & vc.N(1)
+      		End If
+      	End If
+      	
+         'EMAIL
+      	Dim email As New NotesName( VC_GetItemText(nd, "MailAddress") )
+      	vc.eMail = email.Abbreviated
+      	If (True = VCC_IsNotesMail(vc.eMail)) Then
+      		vc.eMailNotes = vc.eMail
+            'Search Web field
+      		tmp = VCC_FindEmailString(vc.URL)
+      		If (0 = Len(tmp)) Then
+      			tmp = VCC_FindEmailString(vc.Note)
+      		End If
+      		If (0 = Len(tmp)) Then
+      			tmp = vc.eMail
+      		End If
+      		tmp = VCC_GetBasicEMail(tmp)
+      		vc.eMail = Inputbox("Please type the Internet e-mail for " & vc.FN,"Could not find an Internet e-mail Address",tmp)
+      	End If
+      	
+         'WORK ADDRESS
+      	vc.wAdr(3) = VCC_RTrim(Chr(13), VCC_RTrim(Chr(10), VC_GetItemText(nd, "OfficeStreetAddress")))
+      	vc.wAdr(4) = VC_GetItemText(nd, "OfficeCity")
+      	vc.wAdr(5) = VC_GetItemText(nd, "OfficeState")
+      	vc.wAdr(6) = VC_GetItemText(nd, "OfficeZip")
+      	vc.wAdr(7) = VC_GetItemText(nd, "OfficeCountry")
+      	
+         'WORK LABEL
+      	If (vc.wAdr(3) > "") Then 
+      		vc.wLabel = vc.wAdr(3)
+      		For i=3 To MAX_ADR
+      			If (vc.wAdr(i) > "") Then
+      				vc.wLabel = vc.wLabel & LB
+      				Exit For
+      			End If
+      		Next i
+      	End If
+      	If (vc.wAdr(4) > "") Then vc.wLabel = vc.wLabel & vc.wAdr(4)
+      	If (vc.wAdr(5) > "") Then 
+      		If (vc.wAdr(4) > "") Then vc.wLabel = vc.wLabel & ", "
+      		vc.wLabel = vc.wLabel & vc.wAdr(5)
+      	End If
+      	If (vc.wAdr(6) > "") Then
+      		If (vc.wAdr(4) > "" Or vc.wAdr(5) > "") Then vc.wLabel = vc.wLabel & "  " 
+      		vc.wLabel = vc.wLabel & vc.wAdr(6)
+      	End If
+      	If (vc.wAdr(7) > "") Then 
+      		If (0<>Len(vc.wLabel)) Then vc.wLabel = vc.wLabel & LB
+      		vc.wLabel = vc.wLabel & vc.wAdr(7)
+      	End If
+      	
+      	
+         'HOME ADDRESS
+      	If (VC_NO = VC_HideHomeInfo) Then
+      		vc.hAdr(3) = VCC_RTrim(Chr(13), VCC_RTrim(Chr(10), VC_GetItemText(nd, "StreetAddress")))
+      		vc.hAdr(4) = VC_GetItemText(nd, "City")
+      		vc.hAdr(5) = VC_GetItemText(nd, "State")
+      		vc.hAdr(6) = VC_GetItemText(nd, "Zip")
+      		vc.hAdr(7) = VC_GetItemText(nd, "Country")
+      		
+         'HOME LABEL
+      		If (vc.hAdr(3) > "") Then 
+      			vc.hLabel = vc.hAdr(3)
+      			For i=3 To MAX_ADR
+      				If (vc.hAdr(i) > "") Then
+      					vc.hLabel = vc.hLabel & LB
+      					Exit For
+      				End If
+      			Next i
+      		End If
+      		If (vc.hAdr(4) > "") Then vc.hLabel = vc.hLabel & vc.hAdr(4)
+      		If (vc.hAdr(5) > "") Then 
+      			If (vc.hAdr(4) > "") Then vc.hLabel = vc.hLabel & ", "
+      			vc.hLabel = vc.hLabel & vc.hAdr(5)
+      		End If
+      		If (vc.hAdr(6) > "") Then
+      			If (vc.hAdr(4) > "" Or vc.hAdr(5) > "") Then vc.hLabel = vc.hLabel & "  " 
+      			vc.hLabel = vc.hLabel & vc.hAdr(6)
+      		End If
+      		If (vc.hAdr(7) > "") Then 
+      			If (0<>Len(vc.hLabel)) Then vc.hLabel = vc.hLabel & LB
+      			vc.hLabel = vc.hLabel & vc.hAdr(7)
+      		End If
+      	Else
+      		For i = 1 To 7
+      			vc.hAdr(i) = ""
+      		Next i
+      	End If
+      	
+      	
+         'PHONE INFORMATION
+      	For i=1 To 6
+      		vc.Tel(i) = VC_GetItemText(nd, NotesPhoneField(i))
+      		NotesPhoneLabel(i) = VC_GetItemText(nd, "PhoneLabel_" & Cstr(i))
+      	Next i
+         '   FORMAT PHONES
+      	For i=1 To 3 Step 2
+      		If Not(vc.Tel(i)="") Then 
+      			inS = Instr(1, Ucase(NotesPhoneLabel(i)), "OFFICE", 0)
+      			If (inS=0) Then 
+      				other = other -1
+      				vc.Tel(other) = vc.Tel(i)
+      				vc.Tel(i) = ""
+      			End If
+      		End If
+      	Next i
+      	For i=2 To 4 Step 2
+      		If Not(vc.Tel(i)="") Then 
+      			inS = Instr(1, Ucase(NotesPhoneLabel(i)), "HOME", 0)
+      			If (inS=0) Then 
+      				other = other -1
+      				vc.Tel(other) = vc.Tel(i)
+      				vc.Tel(i) = ""
+      			Else
+      				If (VC_YES = VC_HideHomeInfo) Then
+      					vc.Tel(i) = ""
+      				End If
+      			End If
+      		End If
+      	Next i
+      	For i=6 To 6
+      		If Not(vc.Tel(i)="") Then 
+      			inS = Instr(1, Ucase(NotesPhoneLabel(i)), "PAGER", 0)
+      			If (inS=0) Then 
+      				other = other -1
+      				If (vc.Tel(other)="") Then 
+      					vc.Tel(other) = vc.Tel(i)
+      					vc.Tel(i) = ""
+      				End If
+      			End If
+      		End If
+      	Next i
+      	For i=5 To 5
+      		If Not(vc.Tel(i)="") Then 
+      			inS = Instr(1, Ucase(NotesPhoneLabel(i)), "CELL", 0)
+      			If (inS=0) Then 
+      				other = other -1
+      				If (vc.Tel(other)="") Then 
+      					vc.Tel(other) = vc.Tel(i)
+      					vc.Tel(i) = ""
+      				End If
+      			End If
+      		End If
+      	Next i
+      	
+      EXIT_READ_CONTACT:
+      	VCC_ReadContact = MAX_TEL + 1 - other
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_PrintToFile:2:8
+      '==================================================
+      Function VCC_PrintToFile (OverrideFileName$, otherTels%, vc As VCF) As String
+      '==================================================
+         '   This  Function creates the vCard
+         '   RETURNS: The path + filename of vCard created
+         '-----------------------------------------------
+      	On Error Goto EXIT_CREATEFILE
+      	Dim fnum%,nLines%, txtFN$
+      	
+         'Open VCF Text File
+      	fnum = Freefile()
+      	If (0 = Len(OverrideFileName)) Then
+      		If ("" = vc.FN) Then Goto EXIT_CREATEFILE
+      		txtFN = VC_GetFolder & VC_ReplaceChar(" ", "_", vc.FN) & VC_EXT
+      		Open txtFN For Output As #fnum
+      	Else
+      		txtFN = VC_GetFolder & VC_FileTitle(VC_ReplaceChar(" ", "_", OverrideFileName)) & VC_EXT
+      		Open txtFN For Append As #fnum
+      	End If
+      	
+      	nLines = 0
+      	Forall v In VCC_GenerateOutput( vc, otherTels )
+      		If (v<>"") Then
+      			Print #fnum, v
+      			nLines = 1 + nLines
+      		End If
+      	End Forall
+      	
+      EXIT_CREATEFILE:
+      	On Error Resume Next
+      	Close #fnum
+      	If (0 = nLines) Then txtFN = ""
+      	VCC_PrintToFile = txtFN
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_Fold:2:8
+      '==================================================
+      Function VCC_Fold (LB$, txt$) As String
+      '==================================================
+         '   This  Function returns 72 chars per line
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim rtn$, tmp$, testCut$
+      	Dim EOL$
+      	Dim badCut%, CutLine%
+      	rtn = ""
+      	tmp = VCC_ReplaceLineBreak(LB, txt)
+      	
+      	If (ENC_QP = LB) Then
+      		EOL = "=" & VCC_ODOA
+      	Else
+      		EOL = VCC_ODOA & " "
+      	End If
+      	
+      	Do While (Len(tmp)>VC_LINE_MAX)
+      		CutLine = VC_LINE_MAX - 1
+      		
+      		If (ENC_QP = LB) Then
+              ' test for  =0D=0A  at the end of the line
+              ' we don't want to break up this pair
+      			testCut = Mid(tmp, VC_LINE_MAX-7, 14)
+      			badCut  = Instr(1, testCut, ENC_QP, 0)
+      			If (badCut > 0) Then CutLine = VC_LINE_MAX - 7
+      			
+      		Else
+              ' test for  \n  at the end of the line
+              ' we don't want to break this up
+      			testCut = Mid(tmp, VC_LINE_MAX-3, 6)
+      			badCut  = Instr(1, testCut, "\n", 0)
+      			If (badCut > 0) Then CutLine = VC_LINE_MAX - 3
+      		End If
+      		
+              ' fold the line into lines less than 72 chars
+      		rtn = rtn & Left(tmp, CutLine) & EOL
+      		tmp = Mid(tmp, CutLine + 1)
+      	Loop
+      	
+      	VCC_Fold = rtn & tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_ReplaceLineBreak:2:8
+      '==================================================
+      Function VCC_ReplaceLineBreak (LB$, txt$) As String
+      '==================================================
+         '   This  Function replaces line breaks with vCard 
+         '   formatted line breaks
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim tmp$, NL$
+      	Dim i%
+      	tmp = txt
+      	
+      	NL = Chr(13)
+      	i = Instr(1,tmp,NL,0)
+      	Do While (i>0)
+      		tmp = Left(tmp,i-1) & LB & Mid(tmp,i+1)
+      		i = Instr(1,tmp,NL,0)
+      	Loop
+      	
+      	NL = Chr(10)
+      	i = Instr(1,tmp,NL,0)
+      	Do While (i>0)
+      		tmp = Left(tmp,i-1) & Mid(tmp,i+1)
+      		i = Instr(1,tmp,NL,0)
+      	Loop
+      	
+      	VCC_ReplaceLineBreak = tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_FindEmailString:2:8
+      '==================================================
+      Function VCC_FindEmailString(txt$) As String
+      '==================================================
+         '   Examine txt for any sign of an email string
+         '-----------------------------------------------
+      	Dim i%, pDot%, pStart%
+      	Dim tmp$
+      	
+      	tmp = ""
+      	pDot = 0
+      	i = 1
+      	
+      	i = Instr(i,txt,"@",0)
+      	If (i>0) Then
+      		pDot = Instr(i,txt,".",0)
+      	End If
+      	
+      	If (pDot>0) Then
+            'Right Trim
+      		tmp = Left(txt, pDot + 4)
+      		
+            'Left Trim
+      		i = 1
+      		pStart = i
+      		Do While i>0
+      			i = Instr(pStart,tmp," ",0)
+      			If (i>0) Then pStart = i + 1
+      		Loop
+      		tmp = Mid(tmp,pStart)
+      	End If
+      	
+      	VCC_FindEmailString = VCC_GetBasicEMail(tmp)
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_FormatEMailString:2:8
+      '==================================================
+      Function VCC_FormatEMailString (txt$) As String
+      '==================================================
+         '   Sets correct vCard eMail type
+         '-----------------------------------------------
+      	On Error Resume Next
+      	Dim tmp$
+      	
+      	If (True = VCC_IsNotesMail(txt)) Then
+            ' Notes Mail Type
+      		txt = VCC_GetBasicEMail(txt)
+      		If (VC_GetVersion <> "2.1") Then
+      			tmp = ";TYPE=X-LOTUS-NOTES:" & txt
+      		Else
+      			tmp = ";X-LOTUS-NOTES:" & txt
+      		End If
+      	Else
+            ' Strip any spaces from email name
+      		tmp = ":" & VC_ReplaceChar(" ", "_", VCC_GetBasicEMail(txt))
+      	End If
+      	
+      	VCC_FormatEMailString = tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_IsNotesMail:2:8
+      '==================================================
+      Function VCC_IsNotesMail(txt$) As Integer
+      '==================================================
+      	Dim i%, IsNotes%
+      	
+         'Is it internet? or Notes?
+      	IsNotes = True
+      	i = Instr(1,txt,"@",0)
+      	If (i>0) Then
+      		i = Instr(i,txt,".",0)
+      		If (i>0) Then IsNotes = False
+      	End If
+      	
+      	VCC_IsNotesMail = IsNotes
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_GetBasicEMail:2:8
+      '==================================================
+      Function VCC_GetBasicEMail(txt$) As String
+      '==================================================
+      	Dim tmp$
+      	Dim i%,j%
+      	
+      	tmp = txt
+      	If Not (0=Len(tmp)) Then
+      		
+            'Find "Harry Houdini <harry_houdini@lotus.com>"
+      		i = Instr(1,tmp,"<",0)
+      		If (i>0) Then
+      			j = Instr(i,tmp,">",0)
+      			If (j>0) Then 
+      				tmp = Mid(tmp, i+1, j-i-1)
+      			Else
+      				tmp = Mid(tmp, i+1)
+      			End If
+      		End If
+      		
+            'Now look for multiple domains, "Frank James@LOTUS @NOTES"
+      		i = Instr(1,tmp,"@",0)
+      		If (i>0) Then
+      			j = Instr(i+1,tmp,"@",0)
+      			If (j>0) Then 
+      				tmp = Left(tmp, i-1)
+      			End If
+      		End If
+      		
+      	End If
+      	VCC_GetBasicEMail = tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_GetType:2:8
+      '==================================================
+      Function VCC_GetType(txt$) As String
+      '==================================================
+         'Returns TYPE= list for either v3.0 or 2.1
+      	On Error Resume Next
+      	Dim tmp$, rtn$
+      	Dim i%
+      	
+      	tmp = txt & ";"
+      	
+      	If ("3.0" = VC_GetVersion) Then
+      		i = Instr(1,tmp,";",0)
+      		Do While i>0
+      			Mid(tmp, i, 1) = ","
+      			i = Instr(1,tmp,";",0)
+      		Loop
+      		rtn = "TYPE=" & tmp
+      	Else
+      		rtn = tmp
+      	End If
+      	
+      	VCC_GetType = Left(rtn, Len(rtn) - 1)
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_Escape:2:8
+      '==================================================
+      Function VCC_Escape(txt$) As String
+      '==================================================
+         ' Escapes commas and semi-colons in the vCard property value
+      	Dim tmp$
+      	Dim i%
+      	tmp = txt
+      	
+      	If (VC_GetVersion > "2.1") Then
+            ' CHECK FOR COMMA
+      		i=1
+      		i = Instr(i,tmp,",",0)
+      		Do While i>0
+      			tmp = Left(tmp,i-1) & "\" & Mid(tmp,i)
+      			If (i+2) > Len(tmp) Then Exit Do
+      			i = Instr(i+2,tmp,",",0)
+      		Loop
+            ' CHECK FOR SEMI-COLON
+      		i=1
+      		i = Instr(i,tmp,";",0)
+      		Do While i>0
+      			tmp = Left(tmp,i-1) & "\" & Mid(tmp,i)
+      			If (i+2) > Len(tmp) Then Exit Do
+      			i = Instr(i+2,tmp,";",0)
+      		Loop
+      	End If
+      	
+      	VCC_Escape = tmp
+      End Function
+      '++LotusScript Development Environment:2:2:VCC_SetPreferredvCard:2:8
+      '==================================================
+      Sub VCC_SetPreferredvCard (vCardPath$) 
+      '==================================================
+      	VC_StartNotesSession
+      	Call m_NS.SetEnvironmentVar(ENV_PREF_VCARD, vCardPath, False)
+      End Sub
+      '++LotusScript Development Environment:2:1:VCC_GetPreferredvCard:2:8
+      '==================================================
+      Function VCC_GetPreferredvCard () As String
+      '==================================================
+      	Dim ab      As NotesDatabase
+      	Dim docs    As NotesDocumentCollection
+      	Dim people  As NotesView
+      	Dim doc     As NotesDocument
+      	Dim nn      As NotesName
+      	
+      	
+      	Dim DoCreate%
+      	Dim LastName$
+      	Dim FullName$
+      	Dim FileName$
+      	Dim i%
+      	
+      	VC_StartNotesSession
+      	Set nn = New NotesName(m_NS.UserName)
+      	FullName = nn.Common
+      	If (0 = Len(FullName)) Then FullName = m_NS.UserName
+      	LastName = VC_GetLastName(FullName)
+      	
+      	On Error Resume Next
+      	DoCreate = False
+      	
+      	
+         ' RETRIEVE ANY EXISTING VCARD
+      	
+         ' Get Saved vCard File
+      	FileName = m_NS.GetEnvironmentString(ENV_PREF_VCARD, False)
+      	
+         ' Try obtaining vCard from vCard dir
+      	If (0 = Len(FileName) Or 0 = Len(Dir(FileName))) Then
+      		FileName = VC_GetExistingVCardFile(FullName)
+      	End If
+      	
+      	
+         ' CREATE NEW VCARD  by Searching the Preferred AddressBook for Current User Info
+      	
+      	If (0 = Len(FileName)) Or (0 = Len(Dir(FileName))) Then
+      		Print "Attempting to create a vCard for " & FullName
+      		Set ab = m_NS.GetDatabase("", VC_GetPreferredDB)
+      		
+      		If (True = ab.IsOpen) Then
+      			Set people = ab.GetView("People")
+      			If Not (people Is Nothing) Then
+      				Set docs = people.GetAllDocumentsByKey(LastName, False)            
+      				
+                  ' Examine each doc in the collection
+      				Set doc = docs.GetFirstDocument
+      				Do While Not (doc Is Nothing)
+      					If (Lcase(FullName) = Lcase(VC_GetItemText(doc, "FullName"))) Then
+      						DoCreate = True
+      						Exit Do
+      					End If
+      					Set doc = docs.GetNextDocument(doc)
+      				Loop
+      				
+      			End If
+      		End If
+      		
+      		If (False = DoCreate) Then
+      			Dim uiw As New NotesUIWorkspace
+      			Dim msg_NoInfo$
+      			Dim imail$
+      			
+      			msg_NoInfo = "Unable to locate any person document for " & FullName & Chr(13) & Chr(13) & _
+      			"Click OK to create your personal data document, or" & Chr(13) & _
+      			"Click Cancel then run the vCard\Profile agent" & Chr(13) & _
+      			" to select an existing vCard file."
+      			
+               '--- Do You Want to Create A vCard?
+      			If (1 = Messagebox( msg_NoInfo, 49, "No vCard Entry Found")) Then
+      				Set doc = ab.CreateDocument
+      				Call doc.AppendItemValue("Form", "Person")
+      				Call doc.AppendItemValue("Type", "Person")
+      				Call doc.AppendItemValue("MailSystem", "5")
+      				Call doc.AppendItemValue("MailAddress", VCC_GetUserEmail)
+      				Call doc.AppendItemValue("FullName", FullName)
+      				Call doc.AppendItemValue("LastName", LastName)
+      				Call doc.AppendItemValue("MiddleInitial", VC_GetMiddleName(FullName))
+      				Call doc.AppendItemValue("FirstName", VC_GetFirstName(FullName))
+      				Call doc.AppentItemValue("CompanyName", nn.Organization)
+      				Call doc.Save(True, False, False)
+      				
+      				Call uiw.EditDocument(True, doc, False)
+      				Messagebox "Run the vCard\Create agent again after saving this form." & Chr(13) & _
+      				"You should enter your phone number and other information.", 0, "Create Personal Data"
+      			End If
+               'Exit Function
+      		End If
+      		
+      		If (True = DoCreate) Then
+               'Create new vCard
+      			FileName = vCard_ExportToFile(doc, "")
+      			If Not (0 = Len(FileName)) Then Print "Created vCard, " & FileName
+      		End If
+      	End If
+      	
+      	Call VCC_SetPreferredvCard (FileName)
+      	VCC_GetPreferredvCard = FileName
+      End Function
+      '++LotusScript Development Environment:2:2:VCC_PromptForPreferredvCard:2:8
+      '==================================================
+      Sub VCC_PromptForPreferredvCard
+      '==================================================
+      	Dim FileName$, msg$, title$, Filter$
+      	Dim FileVar As Variant
+      	Dim uiw As Variant
+      	
+      	FileName = VCC_GetPreferredvCard
+      	title = "Profile:  Preferred vCard"
+      	If (0 = Len(FileName)) Then
+      		title = title & " (No Personal vCard Found)"
+      		msg = "Type the path to an existing vCard for your personal vCard."
+      		FileName = VC_GetFolder
+      	Else
+      		msg = "Use this file as your personal vCard?"
+      	End If
+      	If (VC_IsVersion4) Then
+      		FileName = Inputbox(msg, title, FileName, 200, 200)
+      		If (Len(FileName) = 0) Then Exit Sub
+      	Else
+      		Set uiw = New NotesUIWorkspace
+      		Filter = "vCard Files (*.vcf)|*.vcf|Text Files (*.TXT)|*.TXT"
+      		FileVar  = uiw.OpenFileDialog(False, "Select Your Personal vCard File", Filter, VC_GetFolder, FileName)
+      		If (Isempty(FileVar)) Then Exit Sub
+      		FileName = FileVar(0)
+      	End If
+      	If (FileName = VC_GetFolder) Then FileName = ""
+      	Call VCC_SetPreferredvCard (FileName)
+      End Sub
+      '++LotusScript Development Environment:2:1:VCC_GetUserEmail:2:8
+      '==================================================
+      Function VCC_GetUserEmail () As String
+      '==================================================
+         ' take a guess using format:
+         '     common_name@organization.com
+         '     i.e. frank_dawson@lotus.com
+      	Dim email$, locID$
+      	Dim nab$
+      	Dim comma%
+      	Dim IMail As Variant
+      	Dim m_NAB As NotesDatabase
+      	Dim locDoc As NotesDocument
+      	Dim Chair As New NotesName(m_NS.UserName)
+      	
+      	
+         '--- Open Local NAB
+      	nab = m_NS.GetEnvironmentString("Names", True)
+      	If (0 = Len(nab)) Then nab = "names.nsf"
+      	comma = Instr(1, nab, ",", 0)
+      	If (comma > 0) Then
+      		nab = Left(nab, comma - 1)
+      	End If
+      	Set m_NAB = m_NS.GetDatabase("", nab)
+      	
+         '--- Search Location Doc for Internet Email Setting
+      	locID = m_NS.GetEnvironmentString("Location", True)
+      	comma = Instr(1, locID, ",", 0)
+      	If (comma > 0) Then
+      		locID = Mid(locID, comma + 1)
+      		comma = Instr(1, locID, ",", 0)
+      		If (comma > 0) Then
+      			locID = Left(locID, comma - 1)
+      		End If
+      	End If
+      	If Not (0 = Len(locID)) Then
+      		Set locDoc = m_NAB.GetDocumentByID(locID)
+      		If Not (locDoc Is Nothing) Then
+      			IMail = locDoc.GetItemValue("IMailAddress")
+      			email = Cstr(IMail(0))
+      		End If
+      	End If
+      	
+         '--- If No Internet Email Setting, Then Prompt
+      	If (0 = Len(email)) Then 
+      		email = Chair.Common & "@" & Chair.Organization & ".com"
+      		email = Lcase(VC_ReplaceChar(" ", "_", email))
+      		email = Inputbox("Type the internet e-mail address for " & Chair.Common, "Internet E-mail Address", email, 200, 200)
+      		
+            '--- Save Setting For The User
+      		If Not (0 = Len(locID)) Then
+      			Set locDoc = m_NAB.GetDocumentByID(locID)
+      			If Not (locDoc Is Nothing) Then
+      				Call locDoc.ReplaceItemValue("IMailAddress", email)
+      				Call locDoc.Save (True, False, True)
+      			End If
+      		End If
+      	End If
+      	
+      	VCC_GetUserEmail = email
+      End Function
+      '++LotusScript Development Environment:2:1:VCC_GenerateOutput:2:8
+      '// ==================================================
+      Function VCC_GenerateOutput( vc As VCF, otherTels% ) As Variant
+      '// ==================================================
+      	'// This  Function creates the vCard as an array
+      	'// -----------------------------------------------
+      	Dim i%, noError%
+      	Dim sTmp$, txtFN$, LB$, vver$
+      	Dim aOut As New DynamicArray
+      	On Error Goto EXIT_GENERATEOUTPUT
+      	
+      	'// Set Line Break Type
+      	If ("3.0" = VC_GetVersion) Then
+      		LB = ENC_NL
+      		vver = ""
+      	Else
+      		LB = ENC_QP
+      		vver = "_v" & Mid(VC_GetVersion, 1, 1) & Mid(VC_GetVersion, 3, 1)
+      	End If
+      	
+      	Call aOut.append( "BEGIN:VCARD" )
+      	If ("3.0" = VC_GetVersion) Then
+      		Call aOut.append( "X-IBM-CMT:" & LOTUS_COMMENT )
+      		Call aOut.append( "PRODID:" & PRODUCT_ID )
+      	End If
+      	Call aOut.append( "REV:" & vc.vDateCreated )
+      	Call aOut.append( "UID:" & vc.VID )
+      	Call aOut.append( "VERSION:" & VC_GetVersion )
+      	
+      	'// FULLNAME
+      	Call aOut.append( VCC_Fold(ENC_NORM, "FN:" & VCC_Escape(vc.FN)) )
+      	
+      	'// NAME
+      	sTmp = ""
+      	For i=1 To MAX_N
+      		sTmp = sTmp & VCC_Escape(vc.N(i)) & ";"
+      	Next i
+      	If (Len(sTmp)>MAX_N) Then
+      		sTmp = VCC_RTrim(";", sTmp)
+      		sTmp = VCC_Fold(ENC_NORM, "N:" & sTmp)
+      		Call aOut.append( sTmp )
+      	End If
+      	
+      	'// BUSINESS INFO
+      	If Not (""=vc.Categories) Then
+      		If ("3.0" = VC_GetVersion) Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "CATEGORIES:" & VC_ReplaceChar(";", ",", vc.Categories)) )
+      		End If
+      	End If
+      	If Not (""=vc.eMail) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "EMAIL" & VCC_FormatEMailString(vc.eMail)) )
+      	End If
+      	If Not (""=vc.eMailNotes) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "EMAIL" & VCC_FormatEMailString(vc.eMailNotes)) )
+      	End If
+      	If Not (""=vc.JobTitle) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "TITLE:" & VCC_Escape(vc.JobTitle)) )
+      	End If
+      	
+      	'// NOTE
+      	If Not (""=vc.Note) Then
+      		sTmp = VCARD_DIVIDER
+      		If (ENC_QP = LB) Then
+      			sTmp = ";ENCODING=QUOTED-PRINTABLE" & VCARD_DIVIDER
+      		End If
+      		Call aOut.append( VCC_Fold(LB, "NOTE" & sTmp & VCC_Escape(vc.Note)) )
+      	End If
+      	If Not (""=vc.URL) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "URL:" & VCC_Escape(vc.URL)) )
+      	End If
+      	
+      	'// Organization
+      	sTmp = ""
+      	For i=1 To MAX_ORG
+      		sTmp = sTmp & VCC_Escape(vc.Org(i)) & ";"
+      	Next i
+      	If (Len(sTmp)>MAX_ORG) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "ORG:" & VCC_RTrim(";", sTmp)) )
+      	End If
+      	
+      	
+      	'// WORK ADDRESS
+      	sTmp = ""
+      	For i=1 To MAX_ADR
+      		sTmp = sTmp & VCC_Escape(vc.wAdr(i)) & ";"
+      	Next i
+      	If (Len(sTmp)>MAX_ADR) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "ADR;" & VCC_GetType("WORK") & ":" & VCC_RTrim(";", sTmp)) )
+      	End If
+      	If Not (""=vc.wLabel) Then
+      		sTmp = VCARD_DIVIDER
+      		If (ENC_QP = LB) Then
+      			sTmp = ";ENCODING=QUOTED-PRINTABLE" & VCARD_DIVIDER
+      		End If
+      		Call aOut.append( VCC_Fold(LB, "LABEL;" & VCC_GetType("WORK") & sTmp & VCC_Escape(vc.wLabel)) )
+      	End If
+      	
+      	'// HOME ADDRESS
+      	sTmp = ""
+      	For i=1 To MAX_ADR
+      		sTmp = sTmp & VCC_Escape(vc.hAdr(i)) & ";"
+      	Next i
+      	If (Len(sTmp)>MAX_ADR) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "ADR;" & VCC_GetType("HOME") & ":" & VCC_RTrim(";", sTmp)) )
+      	End If
+      	If Not (""=vc.hLabel) Then
+      		sTmp = VCARD_DIVIDER
+      		If (ENC_QP = LB) Then
+      			sTmp = ";ENCODING=QUOTED-PRINTABLE" & VCARD_DIVIDER
+      		End If
+      		Call aOut.append( VCC_Fold(LB, "LABEL;" & VCC_GetType("HOME") & sTmp & VCC_Escape(vc.hLabel)) )
+      	End If
+      	
+      	'// TEL
+      	'//SPR MROE6PVLE6 requires adding TEL;TYPE= to conform with RFC 2426 standards
+      	If (otherTels<6) Then
+      		If (vc.Tel(1)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("WORK;VOICE") & ":" & VCC_Escape(vc.Tel(1))) )
+      		End If
+      	End If
+      	If (otherTels<5) Then
+      		If (vc.Tel(2)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("HOME;VOICE") & ":" & VCC_Escape(vc.Tel(2))) )
+      		End If
+      	End If
+      	If (otherTels<4) Then
+      		If (vc.Tel(3)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("WORK;FAX") & ":" & VCC_Escape(vc.Tel(3))) )
+      		End If
+      	End If
+      	If (otherTels<3) Then
+      		If (vc.Tel(4)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("HOME;FAX") & ":" & VCC_Escape(vc.Tel(4))) )
+      		End If
+      	End If
+      	If (otherTels<2) Then
+      		If (vc.Tel(5)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("CELL") & ":" & VCC_Escape(vc.Tel(5))) )
+      		End If
+      	End If
+      	If (otherTels<1) Then
+      		If (vc.Tel(6)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL;TYPE=" & VCC_GetType("PAGER") & ":" & VCC_Escape(vc.Tel(6))) )
+      		End If
+      	End If
+      	For i=1 To otherTels
+      		If (vc.Tel(MAX_TEL - i -1)>"") Then
+      			Call aOut.append( VCC_Fold(ENC_NORM, "TEL:TYPE=" & VCC_Escape(vc.Tel(MAX_TEL - i -1))) )
+      		End If
+      	Next i
+      	
+      	'// BIRTHDAY
+      	sTmp = Cstr(vc.Birthday)
+      	If Not (""=sTmp Or "18991230"=sTmp) Then
+      		Call aOut.append( VCC_Fold(ENC_NORM, "BDAY:" & sTmp) )
+      	End If
+      	
+      	'// CLOSE
+      	Call aOut.append( "END:VCARD" )
+      	noError = 1
+      	
+      EXIT_GENERATEOUTPUT:
+      	On Error Resume Next
+      	If (noError = 1) Then
+      		VCC_GenerateOutput = aOut.getArray()
+      	End If
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: vCardExport
+    signed: true
+remaining: []

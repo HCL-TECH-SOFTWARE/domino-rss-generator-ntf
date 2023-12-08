@@ -1,0 +1,120 @@
+---
+class: 512
+flags: 0x0000
+unid: OF23C2D3D571F6ECFD-ON006C26FA852570EB
+items:
+  - name: $AssistAction
+    type: action
+    code_type: 65412
+    opaque: |
+      gQKE/2QGAAAAAFoGWgYBACwABAB0bXBQAQANAGdsb2JhbG9wdGlvbnMAAQAIAHByb3RvY29s9wIDAAcA
+      DAAFAAkxUzZTAAMAPgAIAHByb3RvY29sAQAAAAUABAB0bXBQCwKvAB4ADgAFAAQAdG1wUK4AEAABAAQA
+      aHR0cK4ABAC1AwMABwAaABMACTBSMVMyUzNTNVM5UzExUzEyUwABACgABAB0bXBHAQANAGdsb2JhbG9w
+      dGlvbnMAAQAEAGd1aWT3AgMABwAOAAcACTBSMVM2UwADADwABABndWlkAQAAAAUABAB0bXBHCwKvACAA
+      DgAFAAQAdG1wR64AEgABAAUAbm90ZXMArgAEALUDAwAHABoAEwAJMFIxUzJTM1M1UzlTMTFTMTJTAAEA
+      LgAEAHRtcEgBAA0AZ2xvYmFsb3B0aW9ucwABAAoAYWZfaGVhZGluZ/cCAwAHAA4ABwAJMFIxUzJTAAMA
+      MAEKAGFmX2hlYWRpbmcBAAAABQAEAHRtcEgLAq8ADgEOAAUABAB0bXBIrgAAAQEAgQA8c3R5bGU+SFJ7
+      aGVpZ2h0OjJweDt9IC5mZWVkLWNvbnRhaW5lcnt9IC5mZWVkLXRpdGxle2Rpc3BsYXk6YmxvY2s7fSAu
+      ZmVlZC1saW5re3RleHQtZGVjb3JhdGlvbjpub25lO30gLmZlZWQtbGluazpob3Zlcnt9PC9zdHlsZT4A
+      igAiAgEAZwA8cD48aHIvPjxoMT48Yj5BdmFpbGFibGUgRmVlZHM8L2I+PC9oMT48aHIvPiogQWRkIHRo
+      ZSBsaW5rcyBiZWxvdyB0byB5b3VyIGZhdm9yaXRlIFJTUyBmZWVkIHJlYWRlcjo8L3A+ACICrgAEALUD
+      AwAHAB4AFwAJMFIxUzJTM1M5UzExUzEyUzE0UzE1UwABAC4ABQB0bXBIUAABAA0AZ2xvYmFsb3B0aW9u
+      cwABAAcAaHBfaHRtbAD3AgMABwAMAAUACTBSMlMAAwByAQcAaHBfaHRtbAABAAAABQAFAHRtcEhQAAsC
+      rwBQARAABQAFAHRtcEhQAK4AQAEBAFYAPHA+SW4gYSBtb21lbnQsIHlvdXIgYnJvd3NlciB3aWxsIGJl
+      IHJlZGlyZWN0ZWQgdG8gYSBsaXN0IG9mIGF2YWlsYWJsZSBuZXdzIGZlZWRzLjwvcD6KACICigAiAgEA
+      bwA8cD5SU1Mgc3luZGljYXRpb24sIG5ld3MgZmVlZHMsIGFsbG93cyB5b3UgdG8gY29udHJvbCB3aGF0
+      IHlvdSByZWNlaXZlIGluc3RlYWQgb2YgcmVjZWl2aW5nIHVud2FudGVkIHNwYW0uIDwvcD4AIgKKACIC
+      igAiAgEAUgA8cD5JZiB5b3VyIGJyb3dzZXIgZG9lcyBub3QgYXV0b21hdGljYWxseSBnbyB0byBhbm90
+      aGVyIHBhZ2UsIGNsaWNrIHRoaXMgbGluazo8L3A+IgKuAAQAtQMDAAcAFAAOAAkwUjFTMlMzUzlTMTFT
+      AQAyAAUAdG1wUkUAAQANAGdsb2JhbG9wdGlvbnMAAQALAGhwX3JlZGlyZWN0APcCAwAHAA4ABwAJMFIx
+      UzZTAAMARAALAGhwX3JlZGlyZWN0AAEAAAAFAAUAdG1wUkUACwKvAB4AEAAFAAUAdG1wUkUArgAOAAEA
+      AQAxAK4ABAC1AwMABwAaABMACTBSMVMyUzNTNVM5UzExUzEyUwAAABoBKwABABMAZ2xvYmFsb3B0aW9u
+      c2RpYWxvZwDfAQoCrwD0AOgAAQANAGdsb2JhbG9wdGlvbnMAAQAIAHByb3RvY29sBQAIAHByb3RvY29s
+      +AMBAA0AZ2xvYmFsb3B0aW9ucwABAAQAZ3VpZAUABABndWlk+AMBAA0AZ2xvYmFsb3B0aW9ucwABAAoA
+      YWZfaGVhZGluZwUACgBhZl9oZWFkaW5n+AMBAA0AZ2xvYmFsb3B0aW9ucwABAAcAaHBfaHRtbAAFAAcA
+      aHBfaHRtbAD4AwEADQBnbG9iYWxvcHRpb25zAAEACwBocF9yZWRpcmVjdAAFAAsAaHBfcmVkaXJlY3QA
+      +AOzBa4ADAABAAAArgAEALUDAwAHADoANAAJMFIxUzlTMTFTMTVTMTdTMjBTMjRTMjZTMjlTMzNTMzVT
+      NDJTNDRTNTFTNTNTNTVTNTdT
+    signed: true
+    nonsummary: true
+  - name: $AssistDocCount
+    type: number
+    data: 0
+    signed: true
+  - name: $AssistFlags
+    type: text
+    data: EHs
+    signed: true
+  - name: $AssistInfo
+    type_num: 17
+    type: opaque
+    opaque: |
+      AQAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistLastRun
+    type: time
+    signed: true
+  - name: $AssistQuery
+    type_num: 15
+    type: opaque
+    opaque: gQYAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistRunInfo
+    type: object
+    obj_type: 0x0008
+    obj_class: 0x0200
+    obj_privs: 0x0000
+    opaque: |
+      AAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      7SBkAChyJYW+YVEA73ElhQAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqq
+  - name: $AssistTrigger
+    type: text
+    data: "4"
+    signed: true
+  - name: $AssistType
+    type: number
+    data: 65412
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "7"
+    signed: true
+  - name: $Flags
+    type: text
+    data: f3
+  - name: $FlagsExt
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $Restricted
+    type: number
+    data: 1
+    signed: true
+  - name: $TITLE
+    type: text
+    data: (GlobalOptions)
+    signed: true
+remaining: []

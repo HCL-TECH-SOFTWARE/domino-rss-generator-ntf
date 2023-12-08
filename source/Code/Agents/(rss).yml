@@ -1,0 +1,731 @@
+---
+class: 512
+flags: 0x0000
+unid: OFB98CFF01987A66E9-ON006DAD9F852570FC
+items:
+  - name: $AssistAction
+    type: action
+    code_type: 65413
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      Use "RssLibrary"
+      Use "CustomRssValue"
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Class ElementDesign
+      Declare Class ViewDesign
+      Declare Sub Initialize
+      Declare Sub DumpView( nd As NotesDocument, ndb As NotesDatabase, sHostName$, sPort$, sFeedTitle$ )
+      Declare Sub DumpEntry( oViewInfo As Variant, aElementInfo As Variant, nve As NotesViewEntry, bOpenDoc% )
+      Declare Sub DumpItem( oViewInfo As Variant, aElementInfo As Variant, nve As NotesViewEntry, sGuid$, sLink$, vDate As Variant )
+      Declare Function LoadElementDesign( nd As NotesDocument, nv As NotesView ) As Variant
+      Declare Function ToRFC822Email( sEmail$, bConvertEmail% ) As String
+      Declare Function GetViewDirection( nv As NotesView ) As Integer
+      Declare Function UseViewOnly( aElementInfo As Variant ) As Integer
+      Declare Function ConcatValues( vData As Variant, vType$, bConvertEmail% ) As String
+      Declare Function ConvertToDataType( vData, vType$, bConvertEmail% ) As String
+      Declare Function ReplaceWithValue( sNode$, sValue$) As String
+      Declare Function InternalGetValue( vInfo, eInfo, nve As NotesViewEntry) As Variant
+      Declare Function RemoveAngles( sTxt$ ) As String
+      Declare Function GetWebDbPath( sUrl$ ) As String
+      Declare Sub OutputToConsole( vArray As Variant )
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'rss: 
+      
+      
+      '// ===================================================================
+      '// Localized Constants
+      '
+      Const L_Error_DatabaseOpen$	= "Error opening database for: "
+      Const L_Error_ViewOpen$		= "Error opening view: "
+      Const L_For$	= " for "
+      Const L_YouMustLoginHtml$ = "This feed is password protected or you do not have adequate access to the feed.&nbsp;&nbsp;You must login first."
+      '
+      '// ===================================================================
+      '// Do not translate
+      Const kAgentName$ = "versit"
+      Const kBackSlash$ = "\"
+      Const kKeyWordToken = "%CV%"
+      Const kFile$ = "/$FILE/"
+      Const kFirstFileName$ = |@If(@Attachments>0;@Subset(@AttachmentNames;1);"")|
+      
+      Const kTypeText$ = "1"
+      Const kTypeName$ = "2"
+      Const kTypeDate$ = "3"
+      
+      Const kKeyword1$ = "*Author"
+      Const kKeyword2$ = "*LastModified"
+      Const kKeyword3$ = "*FirstAttachment-URL"
+      Const kKeyword4$ = "*iCalendar-URL"
+      Const kKeyword5$ = "*vCard-URL"
+      
+      Const kMaxDataLength% = 4000	'// limit rich text fields to 4000 chars max
+      
+      Dim gOnce%
+      
+      Class ElementDesign
+      	'// Properties (private by default)
+      	Public isDefined As Integer
+      	Public colNum As Integer
+      	Public respCol As Integer
+      	Public dataType As String
+      	Public tagName As String
+      	Public tagAttr As String
+      	Public keyWord As String
+      	Public nodeValue As String
+      	
+      	'// Initialization
+      	Sub New( isDef%, tn$, ta$, nv$, kw$, dt$ )
+      		Me.colNum = -1
+      		Me.respCol = -1
+      		Me.isDefined = isDef
+      		Me.dataType = dt
+      		Me.tagName = tn
+      		Me.tagAttr = ta
+      		Me.keyWord = kw
+      		Me.nodeValue = nv
+      	End Sub
+      End Class
+      
+      Class ViewDesign
+      	Public guidPrefix As String
+      	Public hostPrefix As String
+      	Public linkPrefix As String
+      	Public versitPrefix As String
+      	Public convertEmail As Integer
+      	Public sortDir As Integer
+      	Sub New( sHostName$, sPort$, ndb As NotesDatabase, ViewID$, nd As NotesDocument, iSortDir% )
+      		Dim sTmp$, sGuidPrefix$, DbRepId$, SrcDbPath$, sLinkPrefix$
+      		
+      		'// get the <guid> prefix
+      		Dim np As NotesDocument
+      		Set np = nd.ParentDatabase.GetProfileDocument("globaloptions")
+      		If (Not np Is Nothing) And (True=np.HasItem("guid")) Then
+      			sGuidPrefix = np.GetItemValue("guid")(0)
+      		End If
+      		If ("" = sGuidPrefix) Then
+      			sGuidPrefix = "notes"
+      		End If
+      		If (Not np Is Nothing) And (True=np.HasItem("protocol")) Then
+      			sLinkPrefix = np.GetItemValue("protocol")(0)
+      		End If
+      		If ("" = sLinkPrefix) Then
+      			sLinkPrefix = "http"
+      		End If
+      		Set np = Nothing
+      		
+      		SrcDbPath = GetWebDbPath(ndb.FilePath)
+      		If ("notes"=sLinkPrefix) Then
+      			sTmp = sLinkPrefix & "://" & sHostName & kSlash
+      		Else
+      			sTmp = sLinkPrefix & "://" & sHostName & sPort & kSlash
+      		End If
+      		If ("notes"=sGuidPrefix) Then
+      			Me.guidPrefix = sGuidPrefix & "://" & sHostName & kSlash & SrcDbPath & kSlash & ViewID & kSlash
+      		Else
+      			Me.guidPrefix = sGuidPrefix & "://" & sHostName & sPort & kSlash & SrcDbPath & kSlash & ViewID & kSlash
+      		End If
+      		Me.hostPrefix = sTmp
+      		Me.linkPrefix = sTmp & SrcDbPath & kSlash & ViewID & kSlash
+      		Me.versitPrefix = sTmp & GetWebDbPath(nd.ParentDatabase.FilePath) & "/" & kAgentName & "?openagent" & D_CGI_Begin & D_CGI_Cache & D_CGI_End & Cstr(Val(nd.GetItemValue("databaseChoice")(0)) - 1) & D_CGI_Begin & D_CGI_Versit & D_CGI_End & ndb.ReplicaID & "-"
+      		Me.convertEmail = ("1"=nd.GetItemValue("convertNameToEmail")(0))
+      		Me.sortDir = iSortDir
+      	End Sub
+      End Class
+      
+      Dim gDirLookup As Variant
+      
+      
+      
+      
+      
+      
+      '++LotusScript Development Environment:2:2:Initialize:1:10
+      Sub Initialize
+      	Dim ns As New NotesSession
+      	Dim ndb As NotesDatabase
+      	Dim nd As NotesDocument
+      	Dim oQuery As New CGIParser(ns.DocumentContext)
+      	Dim nn As New NotesName(ns.EffectiveUserName)
+      	Dim sFeedUNID$, sFeedTitle$, sUserLabel$
+      	On Error Goto ErrorTrap_Redirect
+      	
+      	'// Get Feed Description Document
+      	sFeedUNID = oQuery.GetCGI(D_CGI_Versit)
+      	If (32<>Len(sFeedUNID)) Then
+      		sFeedUNID = oQuery.GetCGI(D_CGI_VersitAlt)	' user may have copy & pasted the url from the browser UI, rather than from the source XML
+      		If (32<>Len(sFeedUNID)) Then
+      			Print "Invalid uid: " & sFeedUNID
+      			Exit Sub
+      		End If
+      	End If
+      	Set nd = ns.CurrentDatabase.GetDocumentByUNID( sFeedUNID )
+      	
+      	'// If based on user's mail database, then get that database
+      	If ( "1" = nd.GetItemValue("databaseChoice")(0) ) Then
+      		sUserLabel = L_For & nn.Common
+      		
+      		'// Open all known addressbooks
+      		Set gDirLookup = New DirectoryLookup(ns)
+      		
+      		'// Get the user's database
+      		Set ndb = gDirLookup.GetUserDatabase( nn.Canonical )
+      	Else
+      		'// else, open the specified database
+      		Set ndb = New NotesDatabase( "", nd.GetItemValue("databaseSelection")(0) )
+      	End If
+      	If (ndb Is Nothing) Then
+      		Exit Sub
+      	End If
+      	If (False=ndb.IsOpen) Then
+      		Call ndb.Open("","")
+      	End If
+      	
+      	'// Emit XML for the specified view
+      	On Error Resume Next
+      	sFeedTitle = nd.GetItemValue("rssTitle")(0) & sUserLabel
+      	Call DumpView( nd, ndb, oQuery.GetHostName() , oQuery.GetPort(), sFeedTitle )
+      	Exit Sub
+      	
+      ErrorTrap_Redirect:
+      	Print "Content-Type: text/html"
+      	Print |<html><body><div style="font-family:sans-serif;font-size:14pt;background-color:red;color:white;padding:6px;border:2px solid gray;">| & Error & |</div></body></html>|
+      	Exit Sub
+      End Sub
+      '++LotusScript Development Environment:2:2:DumpView:1:8
+      Sub DumpView( nd As NotesDocument, ndb As NotesDatabase, sHostName$, sPort$, sFeedTitle$ )
+      	' modified 5/3/06 NAM - added <![CDATA]> to Title, description per SPR  MROE6P7JSM
+      	Dim nv As NotesView
+      	Dim nvc As NotesViewEntryCollection
+      	Dim nve As NotesViewEntry
+      	Dim sViewName$, dtView$, sAdditionalFeedTags$, sTmp$, sViewLink$
+      	Dim iCount%, iRow%, iSort%, bNeedsDoc%
+      	Dim aElementInfo As Variant, oViewInfo As Variant, aTmp As Variant
+      	On Error Resume Next
+      	
+      	'// Get the specified view
+      	sViewName = nd.GetItemValue("viewSelection")(0)
+      	Set nv = ndb.GetView(sViewName)
+      	If( nv Is Nothing ) Then
+      		Print L_Error_ViewOpen & sViewName
+      		Exit Sub
+      	Else
+      		nv.AutoUpdate = False
+      	End If
+      	
+      	'// Cache URL prefices
+      	Set oViewInfo = New ViewDesign( sHostName, sPort, ndb, nv.UniversalID, nd, GetViewDirection( nv ) )
+      	
+      	'// Make sure the first sorted column is a date column, also get the sorting direction up or down
+      	iSort = oViewInfo.sortDir
+      	If (kSortDescending=iSort) Then
+      		sViewLink = oViewInfo.linkPrefix
+      	Else
+      		sViewLink = "<![CDATA[" & oViewInfo.linkPrefix & "?openview&EndView=1" & "]]>"
+      	End If
+      	
+      	'// How many entries should be returned?
+      	iCount = Val (nd.GetItemValue("entryChoice")(0) )
+      	
+      	'// Allow additional info to describe the view
+      	sAdditionalFeedTags = Join( nd.GetItemValue("additionalFeedTags"), "" )
+      	
+      	'// ======================================================
+      	'// Begin the RSS feed
+      	'// ======================================================
+      	dtView = ToRssDate(Now)	'  nv.LastModified returns the LastModified date of the view design, not the last time the IDTABLE was updated
+      	Print "Content-Type: text/xml"
+      	Print "Last-modified: " & dtView	
+      	'---------------------------
+      	'fix 6/28/06 NAM for the following
+      	'MROE6QZLDX:  RSS Generator: "An invalid character was found in text content. Error processing resource..."
+      	Dim sEncoding As Variant
+      	sEncoding=nd.GetItemValue("encoding")(0)
+      	If (sEncoding = "") Then
+      		sEncoding="UTF-8"
+      	End If
+      	'Print the equivalent of this string  <?xml version="1.0" encoding="UFT-8"?>
+      	Print "<?xml version=""1.0"" encoding="""& sEncoding &"""?>" & Chr(13) 
+      	'Print |<?xml version="1.0" encoding="UTF-8" ?>| & Chr(13) 
+      	'---------------------------
+      	sTmp = |<rss version="2.0"|
+      	aTmp = nd.GetItemValue("tagLibraries")
+      	Forall v In aTmp
+      		sTmp = sTmp & | | & v		'  add a space char between libraries
+      	End Forall
+      '	Print sTmp & |>| & Chr(13) & |<channel><title>| & sFeedTitle & | </title><link>| & sViewLink & |</link><description>| & nd.GetItemValue("rssDescription")(0) & |</description><language>| & nd.GetItemValue("rssLanguage")(0) & |</language>|
+      	Print sTmp & |>| & Chr(13) & |<channel><title><![CDATA[| & sFeedTitle & | ]]> </title><link>| & sViewLink & |</link><description><![CDATA[ | & nd.GetItemValue("rssDescription")(0) & | ]]></description><language>| & nd.GetItemValue("rssLanguage")(0) & |</language>|	
+      	If ("list"=nd.GetItemValue("orderedList")(0)) Then
+      		Print "<cf:treatAs><![CDATA[| &list&| ]]></cf:treatAs>"
+      		sTmp = nd.GetItemValue("listInfo")(0)
+      		If (sTmp > "") Then
+      			Print |<cf:listInfo><![CDATA[ | & sTmp & | ]]></cf:listInfo>|
+      		End If
+      	End If
+      	Print "<pubDate>" & dtView & "</pubDate>" & sAdditionalFeedTags & Chr(13)
+      	
+      	'// collect information on the view design
+      	aElementInfo = LoadElementDesign( nd, nv )
+      '	Forall v In aElementInfo
+      '		If (False = aElementInfo(v).isViewColumn) Then
+      '			bNeedsDoc = True
+      '			Exit Forall
+      '		End If
+      '	End Forall
+      	
+      	'// loop thru all entries in the view
+      	iRow = 0
+      	Set nvc = nv.AllEntries
+      	If ( kSortDescending=iSort ) Then
+      		' Newest items are at the top
+      		' Start at the top, then work our way toward the bottom
+      		Set nve = nvc.GetFirstEntry
+      	Else
+      		' Newest items are at the bottom
+      		' Start from the end, then work our way toward the top
+      		Set nve = nvc.GetLastEntry
+      	End If
+      	Do Until nve Is Nothing
+      		' Show entire view entry as an RSS row
+      		If (True=nve.IsDocument) And (False=nve.isConflict) Then
+      			Call DumpEntry( oViewInfo, aElementInfo, nve, bNeedsDoc )
+      		End If
+      		
+      		If( kSortDescending=iSort ) Then
+      			Set nve = nvc.GetNextEntry( nve )
+      		Else
+      			Set nve = nvc.GetPrevEntry( nve )
+      		End If
+      		
+      		' Return only the amount of rows requested
+      		'   -1 will emit all rows
+      		iRow = iRow + 1
+      		'h = Messagebox("Processed entry " & Cstr(iRow))
+      		If (iRow = iCount) Then
+      			Exit Do
+      		End If
+      	Loop
+      	
+      	'** End the RSS feed
+      	Print Chr(13) & |</channel></rss>|
+      End Sub
+      '++LotusScript Development Environment:2:2:DumpEntry:1:8
+      Sub DumpEntry( oViewInfo As Variant, aElementInfo As Variant, nve As NotesViewEntry, bOpenDoc% )
+      	Dim sGuid$, sLink$
+      	Dim vDate As Variant
+      	
+      	'OutputToConsole( nve.ColumnValues )
+      	
+      	'//  Unique Identifier
+      	sGuid = "<guid>" & oViewInfo.guidPrefix & nve.UniversalID & "</guid>"
+      	
+      	'// <link> by default is the normal Domino URL to the document
+      	If (False=aElementInfo(kRSSLink).isDefined) Then
+      		sLink = "<link>" & oViewInfo.linkPrefix & nve.UniversalID & "</link>"
+      	Else
+      		sLink = "<link>" & InternalGetValue( oViewInfo, aElementInfo(kRSSLink), nve) & "</link>"
+      	End If
+      	
+      	'// Create multiple items for multiple pubDates
+      	If (True=aElementInfo(kRSSPubDate).isDefined) Then
+      		vDate = InternalGetValue( oViewInfo, aElementInfo(kRSSPubDate), nve )
+      	Else
+      		vDate = ""
+      	End If
+      	If (True=Isarray(vDate)) Then
+      		Forall v In vDate
+      			Call DumpItem( oViewInfo, aElementInfo, nve, sGuid, sLink, v )
+      		End Forall
+      	Else
+      		Call DumpItem( oViewInfo, aElementInfo, nve, sGuid, sLink, vDate )
+      	End If
+      End Sub
+      '++LotusScript Development Environment:2:2:DumpItem:1:8
+      Sub DumpItem( oViewInfo As Variant, aElementInfo As Variant, nve As NotesViewEntry, sGuid$, sLink$, vDate As Variant )
+      	Dim sValue$, sOutput$
+      	Dim n%
+      	'On Error Goto Error_DumpItem
+      	On Error Resume Next
+      	
+      	'// Item begining
+      	Print Chr(13) & "<item>" & sGuid & sLink
+      	
+      	'// Append the pubDate (date field could have mulitiple values)
+      	If (True=aElementInfo(kRSSPubDate).isDefined) Then
+      		Print "<pubDate>" & ToRssDate( vDate ) & "</pubDate>"
+      	End If
+      	
+      	'// Append all the rest of the elements
+      	'Goto Finish_DumpItem
+      	For n=0 To kDataLast
+      		If (True=aElementInfo(n).isDefined) And (n<>kRSSLink) And (n<>kRSSPubDate) Then
+      			sValue = ConcatValues( InternalGetValue(oViewInfo, aElementInfo(n), nve), aElementInfo(n).dataType, oViewInfo.convertEmail )
+      			sOutput = kTagOpen & aElementInfo(n).tagName & " " & ReplaceWithValue( aElementInfo(n).tagAttr, sValue) & kTagClose
+      			If (""=aElementInfo(n).nodeValue) Then
+      				sValue = ""
+      			Else
+      				sValue = ReplaceWithValue( aElementInfo(n).nodeValue, sValue )
+      				If (kTypeDate<>aElementInfo(n).dataType) And (Len(sValue)>0) Then
+      					sValue = "<![CDATA[" & RemoveAngles(sValue) & "]]>"
+      				End If
+      			End If
+      			Print sOutput & sValue & "</" & aElementInfo(n).tagName & kTagClose
+      		End If
+      	Next n
+      	
+      Finish_DumpItem:
+      	'// Item closure
+      	Print "</item>"
+      	Exit Sub
+      Error_DumpItem:
+      	Messagebox "DumpItem: " & Error
+      	Resume Next
+      End Sub
+      '++LotusScript Development Environment:2:1:LoadElementDesign:1:8
+      Function LoadElementDesign( nd As NotesDocument, nv As NotesView ) As Variant
+      	Dim iColNum%, n%, isDefined%
+      	Dim aElementInfo(0 To kDataLast) As Variant
+      	On Error Resume Next
+      	
+      	'** Reset Info Arrays
+      	For iColNum=0 To kDataLast
+      		isDefined = ("1"=nd.GetItemValue("Other_" & iColNum)(0))
+      		If (True=isDefined) Then
+      			Set aElementInfo(iColNum) = New ElementDesign( True, nd.GetItemValue("tagName_" & iColNum)(0), nd.GetItemValue("tagAttr_" & iColNum)(0), nd.GetItemValue("nodeValue_" & iColNum)(0), Trim(nd.GetItemValue("tagValue_" & iColNum)(0)), nd.GetItemValue("tagType_" & iColNum)(0) )
+      			'// fix up data type
+      			If (""=aElementInfo(iColNum).dataType) Then
+      				aElementInfo(iColNum).dataType = kTypeText
+      			End If
+      		Else
+      			Set aElementInfo(iColNum) = New ElementDesign( False, "", "", "","", "" )
+      		End If
+      	Next iColNum
+      	
+      	'** Find matching view columns
+      	'	"1"<>nc.Formula   is meant to catch "constant-value" column formulas
+      	'	"Constant-value" data will not be included in the NotesViewEntry.ColumnValues array
+      	For n=0 To kDataLast
+      		If (True=aElementInfo(n).isDefined) And (-1=aElementInfo(n).colNum) Then
+      			iColNum = 0
+      			Forall nc In nv.Columns
+      				If (False=nc.isCategory) And (False=nc.isShowTwistie) And ("1"<>nc.Formula) Then
+      					If (aElementInfo(n).keyWord=nc.ItemName) Then
+      						aElementInfo(n).colNum = iColNum
+      						'Messagebox "map: " & nc.ItemName & " to " & iColNum
+      						Exit Forall
+      					Else
+      						iColNum = 1 + iColNum
+      					End If
+      				End If
+      			End Forall
+      		End If
+      	Next n
+      	
+      	LoadElementDesign = aElementInfo
+      End Function
+      '++LotusScript Development Environment:2:1:ToRFC822Email:1:8
+      Function ToRFC822Email( sEmail$, bConvertEmail% ) As String
+      	Dim sConvert$
+      	Dim h%
+      	Dim uve As NotesViewEntry
+      	Dim nn As NotesName
+      	On Error Resume Next
+      	
+      	If (""<>sEmail) And (False=IsRFC822Email(sEmail)) Then
+      		If (False=bConvertEmail) Then
+      			'// Return an abbreviated form of a Domino Name
+      			Set nn=New NotesName(sEmail)
+      			sEmail = nn.Abbreviated
+      		Else
+      			'// If RFC822 is required, then fetch that info from a $Users lookup
+      			If (True=Isempty(gDirLookup)) Then
+      				'// Open all known addressbooks
+      				Dim ns As New NotesSession
+      				Set gDirLookup = New DirectoryLookup(ns)
+      			End If
+      			Set nn = New NotesName(sEmail)
+      			sEmail = gDirLookup.GetRFC822Email(nn.Abbreviated)
+      			If (""=sEmail) Then
+      				sEmail = nn.Abbreviated
+      			End If
+      		End If
+      	End If
+      	
+      	ToRFC822Email = sEmail
+      End Function
+      '++LotusScript Development Environment:2:1:GetViewDirection:1:8
+      Function GetViewDirection( nv As NotesView ) As Integer
+      	Dim iSort%
+      	
+      	If (True=nv.IsCalendar) Then
+      		iSort = kSortAscending
+      	Else
+      		iSort = kSortDescending
+      		Forall nc In nv.Columns
+      			'// Sorting
+      			If( nc.IsSorted ) Then
+      				If( nc.IsSortDescending ) Then
+      					iSort = kSortDescending
+      				Else
+      					iSort = kSortAscending
+      				End If
+      				Exit Forall
+      			End If
+      		End Forall
+      	End If
+      	GetViewDirection = iSort
+      End Function
+      '++LotusScript Development Environment:2:1:UseViewOnly:1:8
+      Function UseViewOnly( aElementInfo As Variant ) As Integer
+      	Dim n%
+      	For n=0 To kDataLast
+      		If (True=aElementInfo(n).isDefined) And (-1=aElementInfo(n).colNum) Then
+      			Select Case aElementInfo(n).keyWord
+      			Case kKeyword1, kKeyword2, kKeyword3, kKeyword4, kKeyword5
+      				Exit Function
+      			End Select
+      		End If
+      	Next n
+      	UseViewOnly = True
+      End Function
+      '++LotusScript Development Environment:2:1:ConcatValues:1:8
+      Function ConcatValues( vData As Variant, vType$, bConvertEmail% ) As String
+      	Dim v0$
+      	If (True=Isarray(vData)) Then
+      		v0 = ""
+      		Forall v1 In vData
+      			v0 = v0 & "<br/>" & ConvertToDataType(v1,vType,bConvertEmail)
+      		End Forall
+      		v0 = Mid( v0, Len("<br/>") )
+      	Else
+      		v0 = ConvertToDataType(vData,vType,bConvertEmail)
+      	End If
+      	ConcatValues = v0
+      End Function
+      '++LotusScript Development Environment:2:1:ConvertToDataType:1:8
+      Function ConvertToDataType( vData, vType$, bConvertEmail% ) As String
+      	Dim vStr$
+      	Select Case vType
+      	Case kTypeName
+      		vStr = ToRFC822Email( Cstr(vData), bConvertEmail )
+      	Case kTypeDate
+      		vStr = ToRssDate( vData ) 
+      	Case Else
+      		vStr = Left(Cstr(vData),kMaxDataLength)
+      	End Select
+      	ConvertToDataType = vStr
+      End Function
+      '++LotusScript Development Environment:2:1:ReplaceWithValue:1:8
+      Function ReplaceWithValue( sNode$, sValue$) As String
+      	Dim i%
+      	If (Len(sNode)>0) And (Len(sValue)>0) Then
+      		i = Instr( sNode, kKeyWordToken )
+      		If (i > 0) Then
+      			ReplaceWithValue = Left( sNode, i-1 ) & sValue & Mid( sNode, Len(kKeyWordToken)+i )
+      		Else
+      			ReplaceWithValue = sNode
+      		End If
+      	Else
+      		ReplaceWithValue = ""
+      	End If
+      End Function
+      '++LotusScript Development Environment:2:1:InternalGetValue:1:8
+      Function InternalGetValue( vInfo, eInfo, nve As NotesViewEntry) As Variant
+      	Dim v As Variant
+      	Dim bHandled%
+      	On Error Goto Error_InternalGetValue
+      	'// Sept 2006:	Updated routine to allow formulas to be used, not just field names
+      	
+      	If (-1=eInfo.colNum) Then
+      		Select Case Left(eInfo.keyWord,1)
+      		Case "*"
+      			'// internal key word
+      			bHandled = True
+      			Select Case eInfo.keyWord
+      			Case kKeyword1
+      				v = nve.Document.Authors
+      			Case kKeyword2
+      				v = nve.Document.LastModified
+      			Case kKeyword3
+      				v = Evaluate( kFirstFileName, nve.Document )
+      				If (v(0)<>"") Then
+      					v = vInfo.linkPrefix & nve.UniversalID & kFile & v(0)
+      				End If
+      			Case kKeyword4, kKeyword5
+      				v = vInfo.versitPrefix & nve.UniversalID
+      			Case Else
+      				bHandled = False
+      			End Select
+      			
+      		Case "@"
+      			'// formula
+      			v = Evaluate( eInfo.keyWord, nve.Document )
+      			bHandled = True
+      		End Select
+      		
+      		If (False=bHandled) Then
+      			If (True=nve.Document.HasItem( eInfo.keyWord )) Then
+      				'// data is in a doc field
+      				v = nve.Document.GetItemValue(eInfo.keyWord)
+      			Else
+      				'// external key word
+      				v = ExternalGetValue( vInfo, eInfo, nve )
+      			End If
+      		End If
+      	Else
+      		'// data is in a view column
+      		If (eInfo.colNum <= Ubound(nve.ColumnValues)) Then
+      			v = nve.ColumnValues(eInfo.colNum)
+      		Else
+      			v = ""
+      		End If
+      	End If
+      	
+      	'// return a single value if possible
+      	If (True=Isarray(v)) Then
+      		If (0=Ubound(v)) Then
+      			v = v(0)
+      		End If
+      	End If
+      Exit_InternalGetValue:
+      	InternalGetValue = v
+      	Exit Function
+      	
+      Error_InternalGetValue:
+      	v = ""
+      	Resume Exit_InternalGetValue
+      End Function
+      '++LotusScript Development Environment:2:1:RemoveAngles:1:8
+      Function RemoveAngles( sTxt$ ) As String
+      	Dim i%
+      	i = Instr(sTxt, "<")
+      	Do While i>0
+      		sTxt = Left(sTxt, i-1) & "&lt;" & Mid(sTxt, i+1)
+      		i = Instr(sTxt, "<")
+      	Loop
+      	i = Instr(sTxt, ">")
+      	Do While i>0
+      		sTxt = Left(sTxt, i-1) & "&gt;" & Mid(sTxt, i+1)
+      		i = Instr(sTxt, ">")
+      	Loop
+      	RemoveAngles = sTxt
+      End Function
+      '++LotusScript Development Environment:2:1:GetWebDbPath:1:8
+      Function GetWebDbPath( sUrl$ ) As String
+      	Dim i%
+      	i = Instr(sUrl, kBackSlash)
+      	Do While i>0
+      		Mid( sUrl, i, 1 ) = kSlash
+      		i = Instr(i, sUrl, kBackSlash)
+      	Loop
+      	GetWebDbPath = sUrl
+      End Function
+      '++LotusScript Development Environment:2:2:OutputToConsole:1:8
+      Sub OutputToConsole( vArray As Variant )
+      	If Not (True=gOnce) Then
+      		On Error Resume Next
+      		Dim iCol%
+      		If (True=Isarray(vArray)) Then
+      			Forall v In vArray
+      				If (True=Isarray(v)) Then
+      					Messagebox "data: [" & iCol & "] " & Cstr(v(0))
+      				Else
+      					Messagebox "data: [" & iCol & "] " & Cstr(v)
+      				End If
+      				iCol = 1 + iCol
+      			End Forall
+      		Else
+      			Messagebox "data:" & Cstr(vArray)
+      		End If
+      		gOnce = True
+      	End If	
+      End Sub
+    dwFlags: 0x00000000
+    signed: true
+    nonsummary: true
+  - name: $AssistDocCount
+    type: number
+    data: 0
+    signed: true
+  - name: $AssistFlags
+    type: text
+    data: EHu
+    signed: true
+  - name: $AssistInfo
+    type_num: 17
+    type: opaque
+    opaque: |
+      AQAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistLastRun
+    type: time
+    signed: true
+  - name: $AssistQuery
+    type_num: 15
+    type: opaque
+    opaque: gQYAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistRunInfo
+    type: object
+    obj_type: 0x0008
+    obj_class: 0x0200
+    obj_privs: 0x0000
+    opaque: |
+      AAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      qCJMACxyJYW+YVEA73ElhQAAAAAAAAAAAAAAAAAAAAAAAAAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqq
+  - name: $AssistTrigger
+    type: text
+    data: "4"
+    signed: true
+  - name: $AssistType
+    type: number
+    data: 65413
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "7"
+    signed: true
+  - name: $Flags
+    type: text
+    data: fLu3
+  - name: $FlagsExt
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $POID
+    type: time
+    data: "2006-01-13T08:10:25.12-05:00"
+  - name: $Restricted
+    type: number
+    data: 1
+    signed: true
+  - name: $TITLE
+    type: text
+    data: (rss)
+    signed: true
+remaining: []

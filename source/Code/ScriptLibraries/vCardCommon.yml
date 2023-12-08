@@ -1,0 +1,834 @@
+---
+class: 512
+flags: 0x2000
+unid: OF324B0DAEE1F2777F-ON00559240852570CA
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Type VCF
+      Declare Type VCPROP
+      Declare Class DynamicArray
+      Declare Sub VC_StartNotesSession()
+      Declare Function VC_GetPreferredDB () As String
+      Declare Sub VC_SetPreferredDB (dbPath$) 
+      Declare Function VC_GetFolder () As String
+      Declare Sub VC_SetFolder (vdir$) 
+      Declare Function VC_GetVersion () As String
+      Declare Sub VC_SetVersion (vCardVersion$)
+      Declare Function VC_HideHomeInfo () As Integer
+      Declare Sub VC_SetHideOption (Byval Hide%)
+      Declare Function VC_GetSaveOption(Byval opt%, Byval permanent%, vFN$) As Integer
+      Declare Sub VC_SetSaveOption(Byval opt%, Byval optVal%) 
+      Declare Function VC_TranslateSettingToButton(EnvSetting$) As Integer
+      Declare Function VC_GetLSDateFromVDate (vDt$) As Variant
+      Declare Function VC_GetVDateFromNotesItem (v As NotesItem) As String
+      Declare Function VC_Int2Str (i%) As String
+      Declare Function VC_ReplaceChar(fCh$, rCh$, txt$) As String
+      Declare Function VC_GetFirstName (CommonName$) As String
+      Declare Function VC_GetMiddleName (CommonName$) As String
+      Declare Function VC_GetLastName (CommonName$) As String
+      Declare Function VC_GetItemText (doc, itemName$) As String
+      Declare Function VC_GetExistingVCardFile (FN$) As String
+      Declare Sub VC_PromptForPreferredDB () 
+      Declare Sub VC_PromptForPreferredSaveMethod
+      Declare Function VC_FileTitle (FN$) As String
+      Declare Function VC_IsVersion4() As Integer
+      Declare Function VC_CreateUID( ndoc ) As String
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'vCardCommon: 
+      
+      
+      '  =====================================================================
+      '
+      '  (C) Copyright 1999, Lotus Development Corporation.
+      '
+      '  By accessing and installing the Software, you indicate your
+      '  acceptance of this License.
+      '
+      '  Lotus Development Corporation "Licensor", hereby grants you a
+      '  nonexclusive, royalty-free, world-wide right and license under any
+      '  Licensor copyrights in the Software to copy and modify the Software
+      '  for personal, non-commercial use only. Any other use is prohibited.
+      '  Licensor expressly reserves all other rights, including patent rights,
+      '  that it may have in the Software. Ownership and title to the Software
+      '  and its source code shall remain at all times with Licensor.
+      '  You agree to reproduce Licensor copyright notice in any derivative
+      '  works of the Software created by you. You may not decompile,
+      '  disassemble or reverse engineer the Software, nor may you disclose
+      '  any trade secret information contained in the Software.
+      '
+      '  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTY, AND
+      '  LICENSOR SHALL HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
+      '  UPDATES, ENHANCEMENTS OR MODIFICATIONS.
+      
+      '  IN NO EVENT SHALL LICENSOR BE LIABLE TO ANY PARTY FOR DIRECT,
+      '  INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOST PROFITS ARISING
+      '  OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY
+      '  OF SUCH DAMAGE.
+      '
+      '  LICENSOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, EXPRESS OR IMPLIED,
+      '  INCLUDING BUT NOT LIMITED TO ANY WARRANTY OF NONINFRINGEMENT OR THE
+      '  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+      '  PURPOSE.
+      '
+      '  The software is provided with RESTRICTED RIGHTS.  Use, duplication,
+      '  or disclosure by the government are subject to restrictions set forth
+      '  in DFARS 252.227-7013 or 48 CFR 52.227-19, as applicable.
+      '
+      '  =====================================================================
+      Public Const VCARD_DIVIDER$ = ":"
+      Public Const VCARD_UID_DIVIDER$ = "-"
+      
+      '**************************************************
+      '   vCard Constants
+      '**************************************************
+      
+      Const ENC_NORM$ = ", "   
+      Const ENC_QP$   = "=0D=0A"
+      Const ENC_NL$   = "\n"
+      
+      Const MAX_N%    = 5
+      Const MAX_ADR%  = 7
+      Const MAX_PROP% = 6
+      Const MAX_ORG%  = 4
+      Const MAX_TEL%  = 10
+      
+      Const PRODUCT_ID$    = "-//IBM//NONSGML Domino RSS Agent//EN"
+      Const LOTUS_COMMENT$ = "This is an electronic business card, conforming to RFC-2426"
+      
+      Const VER_NEW%    = 3
+      Const VER_NEWER%  = 2
+      Const VER_SAME%   = 1
+      Const VER_OLDER%  = 0
+      
+      Const VC_SAVE_COPY%    = 7
+      Const VC_SAVE_REPLACE% = 6
+      Const VC_SAVE_CANCEL%  = 5
+      Const VC_PROMPT%       = 0
+      
+      Const VC_FIRSTLINE%    = 1024
+      Const VC_FILE$         = "VCFF"
+      Const VC_EXT$          = ".VCF"
+      Const VC_LINE_MAX%     = 70
+      
+      Const VC_NO%  = 7
+      Const VC_YES% = 6
+      
+      Const VC_COPYTOCLIPBOARD$ = "cpytoclp"
+      
+      Const ENV_PREF_DB$    = "vCardPrefDB"
+      Const ENV_PREF_DIR$   = "vCardDirectory"
+      Const ENV_PREF_VCARD$ = "vCardPersonal"
+      Const ENV_ADD_AGENT$  = "vCardAddAgent"
+      Const ENV_VERSION$    = "vCardVersion"
+      Const ENV_HIDE_OPT$   = "vCardHideOption"
+      Const ENV_SAVE_OPT$   = "vCardSaveOption"
+      Const ENV_SAVE_DLG$   = "vCardSaveDialog"
+      
+      '**************************************************
+      '   vCard Structures
+      '**************************************************
+      
+      Type VCF
+         'vCard Info
+      	vDateCreated As String
+      	ID As String
+      	VID As String
+      	
+         '->Personal Information
+      	Birthday As Variant
+      	eMail As String
+      	eMailNotes As String
+      	FN As String
+      	N(1 To MAX_N) As String
+      	Tel(1 To MAX_TEL) As String
+      	Note As String
+      	
+         '->Company Information
+      	Assistant As String
+      	AssistantTel As String
+      	IsAssistant As Integer
+      	Categories As String
+      	JobTitle As String
+      	Org(1 To MAX_ORG) As String
+      	URL As String
+      	wAdr(1 To MAX_ADR) As String
+      	wLabel As String
+      	
+         '->Home Information
+      	hAdr(1 To MAX_ADR) As String
+      	hLabel As String
+      	
+      	adrFull As Integer
+      	eType As Integer
+      	tType As Integer
+      End Type
+      
+      Type VCPROP
+      	pname(1 To MAX_PROP) As String
+      End Type
+      
+      Class DynamicArray
+      	m_Count As Integer
+      	m_Last As Integer
+      	m_V() As String
+      	Sub New
+      		m_Count = 0
+      		m_Last  = 63
+      		Redim m_V(0 To m_Last)
+      	End Sub
+      	Sub append( s )
+      		If (m_Count > m_Last) Then
+      			m_Last = 64 + m_Last
+      			Redim Preserve m_V(m_Last)
+      		End If
+      		m_V(m_Count) = s
+      		m_Count = 1 + m_Count
+      	End Sub
+      	Function getArray() As Variant
+      		getArray = Me.m_V
+      	End Function
+      	Function getLastCount() As Integer
+      		getLastCount = Me.m_Count
+      	End Function
+      	Function getLine( n% ) As String
+      		getLine = Me.m_V(n)
+      	End Function
+      	Sub setLine( n%, s$ )
+      		Me.m_V(n) = s
+      	End Sub
+      End Class
+      
+      '**************************************************
+      '   Module Globals
+      '**************************************************
+      Dim m_NS As Variant
+      
+      Dim m_DefFolder$
+      Dim m_Version$
+      Dim m_Hide%
+      Dim m_Preferred$
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      '++LotusScript Development Environment:2:2:VC_StartNotesSession:2:8
+      '==================================================
+      Sub VC_StartNotesSession()
+      '==================================================
+      	If (Isempty(m_NS)) Then
+      		Set m_NS = New NotesSession
+      	End If
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_GetPreferredDB:2:8
+      '==================================================
+      Function VC_GetPreferredDB () As String
+      '==================================================
+         '   This  Function returns the preferred database
+         '   If Agent has not been run, this returns "Names.nsf"
+         '-----------------------------------------------
+      	Dim comma%
+      	If (Len(m_Preferred)=0) Then
+      		VC_StartNotesSession
+      		m_Preferred = m_NS.GetEnvironmentString(ENV_PREF_DB, False)
+      		
+      		If (Len(m_Preferred)=0) Then
+      			m_Preferred = m_NS.GetEnvironmentString("NAMES", True)
+      			If (Len(m_Preferred)=0) Then m_Preferred = "names.nsf"
+      			
+               ' Check for a list of DBs
+      			comma = Instr(1, m_Preferred, ",", 0)
+      			If (comma > 0) Then
+      				m_Preferred = Left(m_Preferred, comma -1)
+      			End If
+      			
+      			Call VC_SetPreferredDB (m_Preferred)
+      		End If
+      	End If
+      	
+      	VC_GetPreferredDB = m_Preferred
+      End Function
+      '++LotusScript Development Environment:2:2:VC_SetPreferredDB:2:8
+      '==================================================
+      Sub VC_SetPreferredDB (dbPath$) 
+      '==================================================
+      	Dim AddAgentProgram$
+      	Dim hShell%
+      	VC_StartNotesSession
+      	Call m_NS.SetEnvironmentVar(ENV_PREF_DB, dbPath, False)
+      	AddAgentProgram = m_NS.GetEnvironmentString(ENV_ADD_AGENT, False)
+      	If (AddAgentProgram > "") Then
+      		AddAgentProgram = AddAgentProgram & " " & dbPath
+      		hShell = Shell( AddAgentProgram, 7 )
+      	End If 
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_GetFolder:2:8
+      '==================================================
+      Function VC_GetFolder () As String
+      '==================================================
+         '   This  Function returns the default folder set by
+         '   the Default Folder Agent
+         '   If Agent has not been run, this returns Notes Data Dir
+         '-----------------------------------------------
+      	If (Len(m_DefFolder)=0) Then
+      		VC_StartNotesSession
+      		m_DefFolder = m_NS.GetEnvironmentString(ENV_PREF_DIR, False)
+      		If (Len(m_DefFolder)=0) Then
+      			m_DefFolder = m_NS.GetEnvironmentString("Directory", True)
+      			If (Len(m_DefFolder)=0) Then m_DefFolder = Curdir()
+      		End If
+      		If Not("\"=Right(m_DefFolder,1)) Then
+      			m_DefFolder = m_DefFolder & "\"
+      		End If
+      		Call m_NS.SetEnvironmentVar("FileDlgDirectory", m_DefFolder, True)
+      	End If
+      	VC_GetFolder = m_DefFolder
+      End Function
+      '++LotusScript Development Environment:2:2:VC_SetFolder:2:8
+      '==================================================
+      Sub VC_SetFolder (vdir$) 
+      '==================================================
+      	If (0=Len(vdir)) Then Exit Sub
+      	VC_StartNotesSession
+      	Call m_NS.SetEnvironmentVar(ENV_PREF_DIR, vdir, False)
+      	Call m_NS.SetEnvironmentVar("FileDlgDirectory", vdir, True)
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_GetVersion:2:8
+      '==================================================
+      Function VC_GetVersion () As String
+      '==================================================
+         ' Gets vCard version
+      	If (0=Len(m_Version)) Then
+      		VC_StartNotesSession
+      		m_Version = m_NS.GetEnvironmentString(ENV_VERSION, False)
+      		
+      		Select Case (m_Version)
+      		Case "2.1"
+      			m_Version = "2.1"
+      		Case Else
+      			m_Version = "3.0"
+      		End Select
+      	End If
+      	
+      	VC_GetVersion = m_Version
+      End Function
+      '++LotusScript Development Environment:2:2:VC_SetVersion:2:8
+      '==================================================
+      Sub VC_SetVersion (vCardVersion$)
+      '==================================================
+         ' Sets vCard version
+      	Dim txt$
+      	
+      	VC_StartNotesSession
+      	Select Case (vCardVersion)
+      	Case "3.0"
+      		txt = "3.0"
+      	Case Else
+      		txt = "2.1"
+      	End Select
+      	Call m_NS.SetEnvironmentVar(ENV_VERSION, txt, False)
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_HideHomeInfo:2:8
+      '==================================================
+      Function VC_HideHomeInfo () As Integer
+      '==================================================
+         ' Gets vCard hide option
+      	If (m_Hide = 0) Then
+      		VC_StartNotesSession
+      		m_Hide = Val(m_NS.GetEnvironmentString(ENV_HIDE_OPT, False))
+      		
+      		If (m_Hide = 0) Or (m_Hide = VC_NO) Then
+      			m_Hide = VC_NO
+      		Else
+      			m_Hide = VC_YES
+      		End If
+      	End If
+      	
+      	VC_HideHomeInfo = m_Hide
+      End Function
+      '++LotusScript Development Environment:2:2:VC_SetHideOption:2:8
+      '==================================================
+      Sub VC_SetHideOption (Byval Hide%)
+      '==================================================
+         ' Does not print HOME information 
+      	VC_StartNotesSession
+      	If (Hide = VC_YES) Then
+      		m_Hide = VC_YES
+      	Else
+      		m_Hide = VC_NO
+      	End If
+      	Call m_NS.SetEnvironmentVar(ENV_HIDE_OPT, m_Hide, False)
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_GetSaveOption:2:8
+      '==================================================
+      Function VC_GetSaveOption(Byval opt%, Byval permanent%, vFN$) As Integer
+      '==================================================
+         '   This Function asks to save a vCard even if 
+         '   existing doc is newer or the same
+         '   RETURNS: VC_SAVE_CANCEL      (Cancel is pressed)   
+         '          VC_SAVE_REPLACE   (Yes is pressed)   
+         '          VC_SAVE_COPY      (No or OK is pressed)      
+      	
+      	Dim rtn%, buttons%
+      	Dim msg0$, msg1$, msg2$, msg3$, msgBody$, msgTitle$, msgPrompt$
+      	
+      	If (True = permanent) Then
+      		rtn = VC_PROMPT
+      		msgTitle = "Set vCard Option:   "
+      		msg1 = "   Yes" & Chr(9) & "= Always replace existing contact with vCard" & Chr(13)
+      		msg2 = "   No" & Chr(9) & "= Always save vCard as a new contact" & Chr(13)
+      		msg3 = "   Cancel" & Chr(9) & "= Always ignore"
+      		buttons = 291
+      	Else
+      		VC_StartNotesSession
+      		rtn = Val(m_NS.GetEnvironmentValue(ENV_SAVE_OPT & opt, False))
+      		
+      		msgTitle = "Replace vCard( " & vFN & " )"
+      		msg1 = "   Yes" & Chr(9) & "= Replace existing contact with vCard" & Chr(13)
+      		msg2 = "   No" & Chr(9) & "= Save vCard as a new contact" & Chr(13)
+      		msg3 = "   Cancel" & Chr(9) & "= Ignore"
+      		buttons = 291
+      	End If
+      	
+      	
+         'Change the message depending on the option desired
+      	
+      	If (VC_PROMPT=rtn) Then
+      		buttons = VC_TranslateSettingToButton(ENV_SAVE_OPT & opt)
+      		
+      		Select Case (opt)
+      		Case VER_NEW
+      			If (True = permanent) Then
+      				msgTitle = msgTitle & "Non-existent"
+      				msg0 = "If a brand new vCard is encountered, save it?" & Chr(13)
+      				msg1 = "   OK" & Chr(9) & "= Always save vCard as a new contact" & Chr(13)
+      			Else
+      				msgTitle = "Save vCard( " & vFN & " )"
+      				msg0 = ""
+      				msg1 = "   OK" & Chr(9) & "= Save vCard as a new contact" & Chr(13)
+      			End If
+      			msgBody = msg0 & msg1 & msg3
+      			buttons = 33 + buttons - 256
+      		Case VER_NEWER
+      			If (True = permanent) Then
+      				msgTitle = msgTitle & "Newer Version"
+      				msg0 = "If a newer vCard is encountered, replace existing Contact?" & Chr(13)
+      			Else
+      				msg0 = "This vCard is a NEWER version of " & vFN & Chr(13)
+      			End If
+      			msgBody = msg0 & msg1 & msg2 & msg3
+      			buttons = 35 + buttons
+      		Case VER_SAME
+      			If (True = permanent) Then
+      				msgTitle = msgTitle & "Duplicate"
+      				msg0 = "If a duplicate vCard is encountered, replace existing Contact?" & Chr(13)
+      			Else
+      				msg0 = vFN & " already exists in your AddressBook" & Chr(13)
+      			End If
+      			msgBody = msg0 & msg1 & msg2 & msg3
+      			buttons = 35 + buttons
+      		Case VER_OLDER
+      			If (True = permanent) Then
+      				msgTitle = msgTitle & "Older Version"
+      				msg0 = "If an older vCard is encountered, replace existing Contact?" & Chr(13)
+      			Else
+      				msg0 = "This vCard is an OLDER version of " & vFN & Chr(13)
+      			End If
+      			msgBody = msg0 & msg1 & msg2 & msg3
+      			buttons = 35 + buttons
+      		End Select
+      		
+            'Prompt for save option
+      		rtn = Messagebox(msgBody, buttons, msgTitle)
+      		
+            ' YES
+      		If (rtn=7) Then rtn=VC_SAVE_COPY
+            ' NO
+      		If (rtn=6) Then rtn=VC_SAVE_REPLACE
+            ' OK
+      		If (rtn=1) Then rtn=VC_SAVE_COPY
+            ' CANCEL
+      		If (rtn=2) Then rtn=VC_SAVE_CANCEL
+      		
+      	End If
+      	
+      	VC_GetSaveOption = rtn
+      End Function 
+      '++LotusScript Development Environment:2:2:VC_SetSaveOption:2:8
+      '==================================================
+      Sub VC_SetSaveOption(Byval opt%, Byval optVal%) 
+      '==================================================
+         '   This Function stores the Save Options so that a 
+         '   user will not be prompted.
+         '   to allow prompting, pass VC_PROMPT
+         '   VC_SAVE_CANCEL, VC_SAVE_REPLACE, VC_SAVE_COPY
+      	
+      	VC_StartNotesSession
+      	
+      	Select Case (optVal%)
+      	Case VC_SAVE_CANCEL
+      	Case VC_SAVE_COPY
+      	Case VC_SAVE_REPLACE
+      	Case VC_PROMPT
+      	Case Else
+      		optVal = VC_PROMPT
+      	End Select
+      	
+      	Call m_NS.SetEnvironmentVar(ENV_SAVE_OPT & opt, optVal, False)
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_TranslateSettingToButton:2:8
+      '==================================================
+      Function VC_TranslateSettingToButton(EnvSetting$) As Integer
+      '==================================================
+      	Dim rtn%
+      	
+      	VC_StartNotesSession
+      	rtn = Val(m_NS.GetEnvironmentValue(EnvSetting, False))
+      	
+      	Select Case (rtn)
+      	Case VC_SAVE_REPLACE:
+      		rtn = 0
+      	Case VC_SAVE_COPY:
+      		rtn = 256
+      	Case VC_SAVE_CANCEL:
+      		rtn = 512
+      	Case Else:
+      		rtn = 256
+      	End Select
+      	
+      	VC_TranslateSettingToButton = rtn
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetLSDateFromVDate:2:8
+      '==================================================
+      Function VC_GetLSDateFromVDate (vDt$) As Variant
+      '==================================================
+      	Dim dtY$
+      	Dim dtM$
+      	Dim dtD$
+      	
+      	If (vDt > "") Then
+            'YEAR
+      		dtY = Left(vDt, 4)
+            'MONTH
+      		dtM = Mid(vDt, 5, 2)
+            'DAY
+      		dtD = Mid(vDt, 7, 2)
+      	End If
+      	
+      	VC_GetLSDateFromVDate = Datenumber(Val(dtY), Val(dtM), Val(dtD))
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetVDateFromNotesItem:2:8
+      '==================================================
+      Function VC_GetVDateFromNotesItem (v As NotesItem) As String
+      '==================================================
+      	Dim dtLN As NotesDateTime
+      	Dim dtLS As Variant
+      	Dim txt As String
+      	On Error Resume Next
+      	
+      	If Not (v Is Nothing) Then
+      		Set dtLN = v.DateTimeValue
+      		dtLS = dtLN.LSLocalTime
+      		txt = Cstr(Year(dtLS)) & VC_Int2Str(Month(dtLS)) & VC_Int2Str(Day(dtLS))
+      	End If
+      	
+      	VC_GetVDateFromNotesItem = txt
+      End Function
+      '++LotusScript Development Environment:2:1:VC_Int2Str:2:8
+      '==================================================
+      Function VC_Int2Str (i%) As String
+      '==================================================
+      	Dim txt$
+      	
+      	If (i < 10) Then
+      		txt = "0" & Cstr(i)
+      	Else
+      		txt = Cstr(i)
+      	End If
+      	
+      	VC_Int2Str = txt
+      End Function
+      '++LotusScript Development Environment:2:1:VC_ReplaceChar:2:8
+      '==================================================
+      Function VC_ReplaceChar(fCh$, rCh$, txt$) As String
+      '==================================================
+      	' Replaces fCh with rCh
+      	Dim tmp$
+      	Dim i%, lenCh%
+      	
+      	lenCh = Len(fCh)
+      	tmp = txt
+      	i = Instr(1,tmp,fCh,0)
+      	Do While (i>0)
+      		Mid(tmp,i,lenCh) = rCh
+      		i = Instr(1,tmp,fCh,0)
+      	Loop
+      	
+      	VC_ReplaceChar = tmp
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetFirstName:2:8
+      '==================================================
+      Function VC_GetFirstName (CommonName$) As String
+      '==================================================
+      	Dim fname$
+      	Dim sp%
+      	
+         'Break up common name
+      	fname = CommonName
+      	sp = Instr(1, fname, " ", 0)
+      	If (sp > 0) Then
+            ' Return First Name
+      		fname = Left(fname, sp - 1)
+      	End If
+      	
+      	VC_GetFirstName = Trim(fname)
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetMiddleName:2:8
+      '==================================================
+      Function VC_GetMiddleName (CommonName$) As String
+      '==================================================
+      	Dim mname$
+      	Dim sp%
+      	
+         'Break up common name
+      	mname = CommonName
+      	sp = Instr(1, mname, " ", 0)
+      	If (sp > 0) Then
+      		mname = Mid(mname, sp + 1)
+            ' Has Middle Name?
+      		sp = Instr(1, mname, " ", 0)
+      		If (sp > 0) Then
+               ' Return Middle Initial Only !!!
+      			mname = Left(mname, sp - 1)
+      			If (Len(mname) > 1) Then
+      				If ("." = Mid(mname, 2, 1)) Then
+      					mname = Left(mname, 1)
+      				Else
+      					mname = ""
+      				End If
+      			End If
+      		Else
+      			mname = ""
+      		End If
+      	Else
+      		mname = ""
+      	End If
+      	
+      	VC_GetMiddleName = Trim(mname)
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetLastName:2:8
+      '==================================================
+      Function VC_GetLastName (CommonName$) As String
+      '==================================================
+      	Dim lname$
+      	Dim sp%
+      	
+         'Break up common name
+      	lname = CommonName
+      	sp = Instr(1, lname, " ", 0)
+      	If (sp > 0) Then
+            ' Middle Name?
+      		If (" " = Mid(lname, sp + 2, 1)) Then sp = sp + 2
+      		If ("." = Mid(lname, sp + 2, 1)) Then sp = sp + 2
+            ' Return Last Name
+      		lname = Mid(lname, sp + 1)
+      	End If
+      	
+      	VC_GetLastName = Trim(lname)
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetItemText:2:8
+      '==================================================
+      Function VC_GetItemText (doc, itemName$) As String
+      '==================================================
+      	Dim value$
+      	Dim semi%
+      	Dim item As NotesItem
+      	On Error Goto EXIT_GET_ITEM
+      	
+      	value = ""
+      	If Not (doc Is Nothing) Then
+      		Set item = doc.GetFirstItem(itemName)
+      		If Not (item Is Nothing) Then
+      			value = item.Text
+      		End If
+      	End If
+      	
+         '-- Replace SEMI-COLONS with Carriage Returns.
+      	semi = Instr(1, value, ";", 0)
+      	Do While (semi > 0)
+      		Mid(value, semi, 1) = Chr$(13)
+      		semi = Instr(semi + 1, value, ";", 0)
+      	Loop
+      	
+      EXIT_GET_ITEM:
+      	On Error Resume Next
+      	VC_GetItemText = value
+      End Function
+      '++LotusScript Development Environment:2:1:VC_GetExistingVCardFile:2:8
+      '==================================================
+      Function VC_GetExistingVCardFile (FN$) As String
+      '==================================================
+      	Dim vFile$, vver$
+      	
+      	If ("3.0" = VC_GetVersion) Then
+      		vver = ""
+      	Else
+      		vver = "_v" & Mid(VC_GetVersion, 1, 1) & Mid(VC_GetVersion, 3, 1)
+      	End If
+      	
+      	'Find VCF Text File
+      	vFile = VC_GetFolder & VC_ReplaceChar(" ", "_", FN) & vver & VC_EXT
+      	If (0 = Len(Dir(vFile))) Then
+      		vFile = ""
+      	End If
+      	
+      	VC_GetExistingVCardFile = vFile
+      End Function
+      '++LotusScript Development Environment:2:2:VC_PromptForPreferredDB:2:8
+      '==================================================
+      Sub VC_PromptForPreferredDB () 
+      '==================================================
+         '   Prompts user for information
+      	Dim oldDbName$, newDbName$
+      	Dim hShell%
+      	oldDbName = VC_GetPreferredDB
+      	newDbName = Inputbox("Type the name of your preferred Personal AddressBook","vCard Options:  Set Preferred AddressBook",oldDbName)
+      	If (newDbName > "") Then
+      		If Not (newDbName = oldDbName) Then
+      			Call VC_SetPreferredDB (newDbName)
+      		End If
+      	End If
+      End Sub
+      '++LotusScript Development Environment:2:2:VC_PromptForPreferredSaveMethod:2:8
+      '==================================================
+      Sub VC_PromptForPreferredSaveMethod
+      '==================================================
+      	Dim rtn%, dlgStyle%
+      	Dim msgPrompt$, msgTitle$
+      	
+      	dlgStyle = 547
+      	dlgStyle = 35 + VC_TranslateSettingToButton(ENV_SAVE_DLG)
+      	
+          'Always Prompt?
+      	msgTitle  = "vCard Saving Profile"
+      	msgPrompt = "Always prompt when a vCard is found?" & Chr(13) & _
+      	"   Yes" & Chr(9) & "= Always prompt me!" & Chr(13) & _
+      	"   No" & Chr(9) & "= Set vCard auto-processing options (4 total) ..." & Chr(13) & _
+      	"   Cancel" & Chr(9) & "= Ignore (Keep current settings)"
+      	
+      	rtn = Messagebox(msgPrompt, dlgStyle, msgTitle)
+      	
+          'Store the vCard Save Options
+      	Select Case (rtn)
+      	Case VC_YES:
+      		Call VC_SetSaveOption(VER_NEW,   VC_PROMPT)
+      		Call VC_SetSaveOption(VER_NEWER, VC_PROMPT)
+      		Call VC_SetSaveOption(VER_SAME,  VC_PROMPT)
+      		Call VC_SetSaveOption(VER_OLDER, VC_PROMPT)
+      		Call m_NS.SetEnvironmentVar(ENV_SAVE_DLG, VC_YES, False)
+      	Case VC_NO:
+      		Call VC_SetSaveOption(VER_NEW,   VC_GetSaveOption(VER_NEW, True, ""))
+      		Call VC_SetSaveOption(VER_NEWER, VC_GetSaveOption(VER_NEWER, True, ""))
+      		Call VC_SetSaveOption(VER_SAME,  VC_GetSaveOption(VER_SAME, True, ""))
+      		Call VC_SetSaveOption(VER_OLDER, VC_GetSaveOption(VER_OLDER, True, ""))
+      		Call m_NS.SetEnvironmentVar(ENV_SAVE_DLG, VC_NO, False)
+      	Case Else:
+      		' do nothing
+      	End Select
+      End Sub
+      '++LotusScript Development Environment:2:1:VC_FileTitle:2:8
+      '==================================================
+      Function VC_FileTitle (FN$) As String
+      '==================================================
+      	Dim dot%, cut%
+      	Dim ftitle$
+      	
+         '--- Trim leading dir slashes
+      	ftitle = FN
+      	cut = Instr(cut + 1, ftitle, "\", 0)
+      	Do Until (cut = 0)
+      		ftitle = Mid(ftitle, cut + 1)
+      		cut = Instr(cut + 1, ftitle, "\", 0)
+      	Loop
+      	
+         '--- Strip Extension
+      	cut = Len(ftitle)
+      	dot = Instr(dot + 1, ftitle, ".", 0)
+      	Do Until (dot = 0)
+      		cut = dot - 1
+      		dot = Instr(dot + 1, ftitle, ".", 0)
+      	Loop
+      	ftitle = Left(ftitle, cut)
+      	
+      	VC_FileTitle = Trim(ftitle)
+      End Function
+      '++LotusScript Development Environment:2:1:VC_IsVersion4:2:8
+      '==================================================
+      Function VC_IsVersion4() As Integer
+      '==================================================
+      	Dim ver%
+      	VC_StartNotesSession
+      	ver = Instr(1, m_NS.NotesVersion, "4.", 0)
+      	If (ver > 0) Then 
+      		VC_IsVersion4 = True
+      	Else
+      		VC_IsVersion4 = False
+      	End If
+      End Function
+      
+      '++LotusScript Development Environment:2:1:VC_CreateUID:1:8
+      Function VC_CreateUID( ndoc ) As String
+      	VC_CreateUID = ndoc.ParentDatabase.ReplicaID & VCARD_UID_DIVIDER & ndoc.UniversalID
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: vCardCommon
+    signed: true
+remaining: []

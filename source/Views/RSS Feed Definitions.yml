@@ -1,0 +1,370 @@
+---
+class: 32776
+flags: 0x0000
+unid: OF47AAAC582FBB58C8-ON006FED9A852570EB
+items:
+  - name: $Collation
+    type_num: 2
+    type: opaque
+    opaque: EgABAABEgGYAAAAFAE9yZGVy
+  - name: $Comment
+    type: text
+    data: ""
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "7"
+    signed: true
+  - name: $Flags
+    type: text
+    data: Y1d
+  - name: $FormatNote
+    type: noteref
+    data:
+      - OFA372131E6A0B1B1D-ON0069C9D1852570EB
+    signed: true
+  - name: $Formula
+    type: formula
+    data: " Form=\"FeedDefinition\""
+    opaque: |
+      5AACABgABQBPcmRlcgAFAAUAT3JkZXIAAwACAFIAAwAkMTEAAQABADEABQAOAGRhdGFiYXNlQ2hvaWNl
+      CgKvACoAGAABAA0ATWFpbCBkYXRhYmFzZQCuABIAAQAFAE90aGVyAK4ABAC1AwMABQBIAEQABgAFAAgA
+      DQAOAAMACQBPcmRlcnJzc1RpdGxldmlld1NlbGVjdGlvbmRhdGFiYXNlQ2hvaWNlJDExJENvbmZsaWN0
+      BAAEAAAAIgAFAAQARm9ybQEADgBGZWVkRGVmaW5pdGlvbgoCAwAHAAoABAAJTDFT
+    signed: true
+  - name: $FormulaClass
+    type: text
+    data: "1"
+    signed: true
+  - name: $Index
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $TITLE
+    type: text
+    data: RSS Feed Definitions|ByOrder
+    signed: true
+  - name: $ViewFormat
+    type_num: 5
+    type: opaque
+    opaque: |
+      AQAFAAwAikQAAFZDAQAFAAUAGgAAACgAAQAACgAAAAAAAAAAAAICAAAAVkMAAAgACgAAAAAA8AABAAAK
+      AAAAAAAAAAAAAgIAAABWQwAADQALAAAAAACgAAEAAAoAAAAAAAAAAAACAgAAAFZDCAAOAAcAAAAAAEAA
+      AQAACgAAAAAAAAAAAAICAAAAVkMAAAMADQBkAAAAUAABAAAKAAAAAAAAAAAAAgIAAABPcmRlck9yZGVy
+      GgACABgABQBPcmRlcgAFAAUAT3JkZXIAAwByc3NUaXRsZUZlZWQgVGl0bGV2aWV3U2VsZWN0aW9uU291
+      cmNlIFZpZXdkYXRhYmFzZUNob2ljZURCIFR5cGUkMTFEYXRhYmFzZSBUeXBlZAACAFIAAwAkMTEAAQAB
+      ADEABQAOAGRhdGFiYXNlQ2hvaWNlCgKvACoAGAABAA0ATWFpbCBkYXRhYmFzZQCuABIAAQAFAE90aGVy
+      AK4ABAC1AwMABwAQAAkACTJTNlM4UzlTACYAAQAAAAEBAAkBAAAKAQEOCgAAPwCtKwEAAQABAAAAAAAA
+      AAAAV0MBAQAJAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAA//8AAAAAAAAAAAAAAAAAAFdDAQEACQAAAAAA
+      AAAAAAAAAAAAAAAAAAQAAAAAAP//AAAAAAAAAAAAAAAAAABXQwEBAAkAAAAAAAAAAAAAAAAAAAAAAAAE
+      AAAAAAD//wAAAAAAAAAAAAAAAAAAV0MBAQAJAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAA//8AAAAAAAAA
+      AAAAAAAAAFdDAQEACQAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAP//AAAAAAAAAAAAAAAAAABCABAAAAAB
+      AP///wABAO/v7wABAAAAAAAAAAAAAAAAAAEAAAAAAAEAsbHSAAEAAQAAAAAAAQCAgIAAAQAAAAAAAAAI
+      AAAAAAABAA==
+    signed: true
+  - name: $ViewGlobalScript
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:2
+    signed: true
+    nonsummary: true
+  - name: $ACTIONS
+    type: composite
+    signed: true
+    nonsummary: true
+    data:
+      - type: 0x00bd
+        BackColor: 216
+        BorderStyle: 1
+        BorderWidth: 0
+        BtnHeight: 8
+        FontID: 0x00000000
+        HeightSpc: 2
+        LineColor: 0
+        LineStyle: 1
+        ShareID: 0x00000000
+        dwFlags: 0x00000001
+      - type: 0x0059
+        opaque: WSABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AABOfA==
+        title: Categori_ze
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAADCg==
+        title: _Send Document
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA9fA==
+        title: _Move To Folder...
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA+fA==
+        title: _Remove From Folder
+      - type: 0x0059
+        opaque: WSABAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0010419f
+        IconIndex: 31
+        ShareId: 0
+        Type: 1
+        data: "@Command([Compose]; \"\":\"\"; \"FeedDefinition\")"
+        data_opaque: PAAAAC4AAgDoAwAAAAAAAAEAAAABAAAAHwIBAA4ARmVlZERlZmluaXRpb27tAwMABwAMAAUACTRTOFMA
+        title: New Feed
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 5
+        ShareId: 0
+        Type: 5
+        opaque: AgACCg==
+        title: _Edit Document
+      - type: 0xffbe
+        Flags: 0x0000419e
+        IconIndex: 95
+        ShareId: 0
+        Type: 1
+        data: |
+          FIELD Order := @If( 0=Order; 0; Order - 1);
+          @True
+        data_opaque: |
+          ggADAFQABQBPcmRlcgAAAAAAAAAAAAAABQAFAE9yZGVyAAoCrwAuABAAAAAAAAAAAAAAAK4AHgAFAAUA
+          T3JkZXIAAAAAAAAAAADwPyMCrgAEALUDAwAHABoAFAAJMVMyUzNTNVM5UzExUzEyUzEzUwAACAArAAMA
+          BwAKAAMACTBSAA==
+        title: Move Up
+      - type: 0xffbe
+        Flags: 0x0000419e
+        IconIndex: 94
+        ShareId: 0
+        Type: 1
+        data: |
+          FIELD Order := 1 + Order;
+          @Command([ViewRefreshFields]);
+          @True
+        data_opaque: |
+          ZgADACQABQBPcmRlcgAAAAAAAAAAAPA/BQAFAE9yZGVyACICAwAHABIACwAJMVMyUzNTNFM1UwAIABIA
+          AgCLEwAAAAAAAO0BAwAHAAoAAwAJMFIAAAAIACsAAwAHAAoAAwAJMFIA
+        title: Move Down
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 7
+        ShareId: 0
+        Type: 5
+        opaque: BQAECg==
+        title: _Forward
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 41
+        ShareId: 0
+        Type: 1
+        data: "@Command([ToolsRunMacro]; \"(GlobalOptions)\")"
+        data_opaque: MgAAACYAAgCiDwAAAAAAAAEADwAoR2xvYmFsT3B0aW9ucykA7QIDAAcACgADAAk0UwA=
+        title: Set Global Options
+  - name: $V5ACTIONS
+    type: composite
+    signed: true
+    nonsummary: true
+    data:
+      - type: 0x00bd
+        BackColor: 216
+        BorderStyle: 1
+        BorderWidth: 0
+        BtnHeight: 8
+        FontID: 0x00000000
+        HeightSpc: 2
+        LineColor: 0
+        LineStyle: 1
+        ShareID: 0x00000000
+        dwFlags: 0x00000001
+      - type: 0xff79
+        BackColor:
+          Flags: 0x0001
+          rgb: 0xb1b1d2
+        BtnBorderDisplay: 0
+        BtnTextJustify: 0
+        BtnWidthStyle: 0
+        ButtonColor:
+          Flags: 0x0001
+          rgb: 0xb1b1d2
+        FontColor:
+          Flags: 0x0001
+          rgb: 0x000000
+        LineColor:
+          Flags: 0x0001
+          rgb: 0x000000
+        Spare:
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+          - 0x00000000
+        barFontID: 0x00000000
+        barHeight:
+          Flags: 0x0000
+          Length:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+          Reserved: 0
+          Units: 0
+        dwFlags: 0x00000003
+        wAppletHeight: 31
+        wBarBackgroundRepeat: 0
+        wBtnInternalMargin: 0
+        wBtnWidthAbsolute: 0
+        wSpare: 0x0000
+        wThemeSetting: 0
+      - type: 0xfffc
+        BorderFlags: 0
+        BorderStyle: 1
+        BorderWidthBottom: 1
+        BorderWidthLeft: 0
+        BorderWidthRight: 0
+        BorderWidthTop: 0
+        Color:
+          Flags: 0x0001
+          rgb: 0x000000
+        DropShadowWidth: 0
+        Flags: 0x00000000
+        InnerWidthBottom: 0
+        InnerWidthLeft: 0
+        InnerWidthRight: 0
+        InnerWidthTop: 0
+        OuterWidthBottom: 0
+        OuterWidthLeft: 0
+        OuterWidthRight: 0
+        OuterWidthTop: 0
+        dwSpare: 0x00000000
+        wSpares:
+          - 0x0000
+          - 0x0000
+          - 0x0000
+          - 0x0000
+          - 0x0000
+      - type: 0x0059
+        opaque: WSABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AABOfA==
+        title: Categori_ze
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAADCg==
+        title: _Send Document
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA9fA==
+        title: _Move To Folder...
+      - type: 0xffbe
+        Flags: 0x0000019d
+        IconIndex: 0
+        ShareId: 0
+        Type: 5
+        opaque: AAA+fA==
+        title: _Remove From Folder
+      - type: 0x0059
+        opaque: WSABAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - type: 0xffbe
+        Flags: 0x0010419f
+        IconIndex: 31
+        ShareId: 0
+        Type: 1
+        data: "@Command([Compose]; \"\":\"\"; \"FeedDefinition\")"
+        data_opaque: PAAAAC4AAgDoAwAAAAAAAAEAAAABAAAAHwIBAA4ARmVlZERlZmluaXRpb27tAwMABwAMAAUACTRTOFMA
+        title: New Feed
+      - type: 0xfff6
+        opaque: 9v8pAAAAAAADABMABwAAAAAAAAAAAAAAAAAAAAAAAAAAAFJTUy5naWY=
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 5
+        ShareId: 0
+        Type: 5
+        opaque: AgACCg==
+        title: _Edit Document
+      - type: 0xff5e
+        opaque: Xv8yAAAAAAAAAAAAFgAAAAAAAAAAAAAAAAAAABYAAAAUAAEACQBFZGl0IEZlZWQAAwA=
+      - type: 0xffbe
+        Flags: 0x0000419e
+        IconIndex: 95
+        ShareId: 0
+        Type: 1
+        data: |
+          FIELD Order := @If( 0=Order; 0; Order - 1);
+          @True
+        data_opaque: |
+          ggADAFQABQBPcmRlcgAAAAAAAAAAAAAABQAFAE9yZGVyAAoCrwAuABAAAAAAAAAAAAAAAK4AHgAFAAUA
+          T3JkZXIAAAAAAAAAAADwPyMCrgAEALUDAwAHABoAFAAJMVMyUzNTNVM5UzExUzEyUzEzUwAACAArAAMA
+          BwAKAAMACTBSAA==
+        title: Move Up
+      - type: 0xffbe
+        Flags: 0x0000419e
+        IconIndex: 94
+        ShareId: 0
+        Type: 1
+        data: |
+          FIELD Order := 1 + Order;
+          @Command([ViewRefreshFields]);
+          @True
+        data_opaque: |
+          ZgADACQABQBPcmRlcgAAAAAAAAAAAPA/BQAFAE9yZGVyACICAwAHABIACwAJMVMyUzNTNFM1UwAIABIA
+          AgCLEwAAAAAAAO0BAwAHAAoAAwAJMFIAAAAIACsAAwAHAAoAAwAJMFIA
+        title: Move Down
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 7
+        ShareId: 0
+        Type: 5
+        opaque: BQAECg==
+        title: _Forward
+      - type: 0xff5e
+        opaque: Xv8wAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAAAABQAAAASAAEABwBGb3J3YXJkAAMA
+      - type: 0xffbe
+        Flags: 0x0000419f
+        IconIndex: 41
+        ShareId: 0
+        Type: 1
+        data: "@Command([ToolsRunMacro]; \"(GlobalOptions)\")"
+        data_opaque: MgAAACYAAgCiDwAAAAAAAAEADwAoR2xvYmFsT3B0aW9ucykA7QIDAAcACgADAAk0UwA=
+        title: Set Global Options
+remaining: []

@@ -1,0 +1,590 @@
+---
+class: 512
+flags: 0x2000
+unid: OFEE62D568D5E647D6-ON00794E31852570C8
+items:
+  - name: $Flags
+    type: text
+    data: s34Q
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $PublicAccess
+    type: text
+    data: "1"
+    signed: true
+  - name: $ScriptLib
+    type: text
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Type iCAL_TIMEZONE
+      Declare Class DynamicArrayICAL
+      Declare Class DirectoryLookupICAL
+      Declare Sub iCAL_Session ()
+      Declare Sub iCAL_Status (stuff$)
+      Declare Function iCAL_GetFolder () As String
+      Declare Sub iCAL_SetFolder (WorkDir$)
+      Declare Sub iCAL_MakeDir (strDir$)
+      Declare Function iCAL_AutoCreate () As Integer
+      Declare Function iCAL_NoSpace (Email$) As String
+      Declare Function iCAL_ReplaceChr (Txt$, FindChr$, ReplChr$) As String
+      Declare Function iCAL_DateToZString (LNDate As Variant) As String
+      Declare Function iCAL_Digits (Qty%, Txt As Variant) As String
+      Declare Function iCAL_NameOnly (Txt$) As String
+      Declare Function iCAL_FileHasValidExt(ObjSource As Variant) As Integer
+      Declare Sub iCAL_DumpItemInfo (thisNote As NotesDocument)
+      Declare Function iCAL_Addr821 (email$) As String
+      Declare Function iCAL_ExplodeList (listText$) As Variant
+      Declare Function Instrr (txt$, searchChr$) As Integer
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      'iCalendarCommon: 
+      
+      
+      '  ************************************
+      '   iCalendar Version 1.02 - 20000127A
+      '  ************************************
+      
+      '  (C) Copyright 1999, Lotus Development Corporation.
+      '
+      '  By accessing and installing the Software, you indicate your
+      '  acceptance of this License.
+      '
+      '  Lotus Development Corporation "Licensor", hereby grants you a
+      '  nonexclusive, royalty-free, world-wide right and license under any
+      '  Licensor copyrights in the Software to copy and modify the Software
+      '  for personal, non-commercial use only. Any other use is prohibited.
+      '  Licensor expressly reserves all other rights, including patent rights,
+      '  that it may have in the Software. Ownership and title to the Software
+      '  and its source code shall remain at all times with Licensor.
+      '  You agree to reproduce Licensor copyright notice in any derivative
+      '  works of the Software created by you. You may not decompile,
+      '  disassemble or reverse engineer the Software, nor may you disclose
+      '  any trade secret information contained in the Software.
+      '
+      '  THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTY, AND
+      '  LICENSOR SHALL HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
+      '  UPDATES, ENHANCEMENTS OR MODIFICATIONS.
+      
+      '  IN NO EVENT SHALL LICENSOR BE LIABLE TO ANY PARTY FOR DIRECT,
+      '  INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOST PROFITS ARISING
+      '  OUT OF THE USE OF THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY
+      '  OF SUCH DAMAGE.
+      '
+      '  LICENSOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, EXPRESS OR IMPLIED,
+      '  INCLUDING BUT NOT LIMITED TO ANY WARRANTY OF NONINFRINGEMENT OR THE
+      '  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+      '  PURPOSE.
+      '
+      '  The software is provided with RESTRICTED RIGHTS.  Use, duplication,
+      '  or disclosure by the government are subject to restrictions set forth
+      '  in DFARS 252.227-7013 or 48 CFR 52.227-19, as applicable.
+      '
+      Public Const iCAL_DIVIDER$ = ":"
+      Const iCAL_PRODUCT_ID$    = "-//IBM//NONSGML Domino RSS Agent//EN"
+      
+      '************* CONSTANTS FROM ORGANIZER
+      ' These values exist in orgconst.lss as ORS_xxx.  To avoid 
+      ' circular inclusion, I have redefined them for use in this module.
+      Const iCAL_MSGTYPE_ACCEPT        = "A"  ' accept meeting request
+      Const iCAL_MSGTYPE_COUNTERACCEPT = "B"
+      Const iCAL_MSGTYPE_CANCEL        = "C"  ' originator cancelled the meeting
+      Const iCAL_MSGTYPE_DELEGATING    = "D"  ' delegated (notifies originator)
+      Const iCAL_MSGTYPE_REFRESHINFO   = "E"
+      Const iCAL_MSGTYPE_COMPLETED     = "F"  ' completed request (for todo's)
+      Const iCAL_MSGTYPE_ADDCALENDAR   = "G"  ' broadcast
+      Const iCAL_MSGTYPE_INVITE        = "I"  ' original meeting request send
+      Const iCAL_MSGTYPE_COUNTERREJECT = "J"  ' originator declined counter proposal
+      Const iCAL_MSGTYPE_DELEGATE      = "L"  ' delegated (notifies delegate)
+      Const iCAL_MSGTYPE_CONFIRMATION  = "N"  ' originator confirmed the meeting
+      Const iCAL_MSGTYPE_PENCILIN      = "P"  ' pencil in meeting request
+      Const iCAL_MSGTYPE_REJECT        = "R"  ' reject meeting request
+      Const iCAL_MSGTYPE_STATUSUPDATE  = "S"  ' originator send status update
+      Const iCAL_MSGTYPE_COUNTER       = "T"  ' counter-proposal (propose change)
+      Const iCAL_MSGTYPE_RESCHEDULE    = "U"  ' originator updated place or time
+      Const iCAL_MSGTYPE_WAITING       = "W"  ' no response
+      Const iCAL_MSGTYPE_REMOVERES     = "Y"
+      Const iCAL_MSGTYPE_REMOVED       = "Z"
+      Const iCAL_MSGTYPE_STATUSREQUIRED= "2"  ' chairperson is requiring invitee to attend
+      Const iCAL_MSGTYPE_STATUSREMOVED = "5"  ' chairperson is removing invitee from list
+      
+      '************* NEW CONSTANTS FROM NOTES 5.01
+      Const iCAL_TYPE_ACCEPT&       = &h00010000&
+      Const iCAL_TYPE_ADDTOCALENDAR&= &h00200000&
+      Const iCAL_TYPE_CANCEL&       = &h00000100&
+      Const iCAL_TYPE_COMPLETED&    = &h00400000&
+      Const iCAL_TYPE_CONFIRMATION& = &h00001000&
+      Const iCAL_TYPE_COUNTER&      = &h00080000&
+      Const iCAL_TYPE_DECLINE&      = &h00020000&
+      Const iCAL_TYPE_DELEGATE&     = &h00040000&
+      Const iCAL_TYPE_INVITE&       = 4
+      Const iCAL_TYPE_REFRESHINFO&  = &h00800000&
+      Const iCAL_TYPE_RESCHEDULE&   = &h00000200&
+      
+      
+      '************* ICAL CONSTANTS
+      Public Const iCAL_ENV_AUTO$     = "iCAL-AUTOCREATE"
+      Public Const iCAL_ENV_FOLDER$   = "iCAL-FOLDER"
+      Public Const iCAL_ENV_IGNORE$   = "iCAL-IGNORE"
+      Public Const iCAL_ENV_ORIGINAL$ = "iCAL-ORIGINAL"
+      
+      Public Const iCAL_DIVIDER_RESP$    = "?"
+      Public Const iCAL_DIVIDER_ORIG$    = "-"
+      
+      Public Const iCAL_ITEM_UID$    = "iCAL_UID"
+      Public Const iCAL_ITEM_STAMP$  = "iCAL_STAMP"
+      Public Const iCAL_EVENT%       = 256
+      Public Const iCAL_TODO%        = 257
+      Public Const iCAL_TZ_MAX_DATES%= 30
+      
+      
+      
+      '************* ICAL STRUCTURES
+      Type iCAL_TIMEZONE
+      	DstM As Integer
+      	StdM As Integer
+      	Dst(0 To iCAL_TZ_MAX_DATES) As String
+      	Std(0 To iCAL_TZ_MAX_DATES) As String
+      	Tag As String
+      End Type
+      
+      Class DynamicArrayICAL
+      	m_Count As Integer
+      	m_Last As Integer
+      	m_V() As String
+      	h As Integer
+      	Sub New
+      		m_Count = 0
+      		m_Last  = 63
+      		Redim m_V(0 To m_Last)
+      	End Sub
+      	Sub append( s )
+      		If (m_Count > m_Last) Then
+      			m_Last = 64 + m_Last
+      			Redim Preserve m_V(m_Last)
+      		End If
+      		m_V(m_Count) = s
+      		m_Count = 1 + m_Count
+      	End Sub
+      	Function getArray() As Variant
+      		getArray = Me.m_V
+      	End Function
+      	Function getLastCount() As Integer
+      		getLastCount = Me.m_Count
+      	End Function
+      	Function getLine( n% ) As String
+      		getLine = Me.m_V(n)
+      	End Function
+      	Sub setLine( n%, s$ )
+      		Me.m_V(n) = s
+      	End Sub
+      End Class
+      
+      Class DirectoryLookupICAL
+      	'// Properties
+      	m_nabs() As Variant
+      	m_views() As Variant
+      	
+      	'// Methods
+      	Sub New( ns As NotesSession )
+      		Call OpenUserViews(ns)
+      	End Sub
+      	
+      	Function GetFirstEntry( sName$ ) As Variant
+      		Dim nve As NotesViewEntry
+      		Set nve = Nothing
+      		Forall nv In Me.m_views
+      			If Not (nve Is Nothing) Then
+      				Set nve = nv.GetEntryByKey( sName )
+      				If Not (nve Is Nothing) Then
+      					Exit Forall
+      				End If
+      			End If
+      		End Forall
+      		Set GetFirstEntry = nve
+      	End Function
+      	Function GetRFC822Email( sName$ ) As String
+      		Dim uve As NotesViewEntry
+      		Dim sEmail$
+      		Set uve = Me.GetFirstEntry( sName )
+      		If Not (uve Is Nothing) Then
+      			'// InternetAddress Field
+      			sEmail = uve.ColumnValues(16)
+      			If (False=Me.IsRFC822Email(sEmail)) Then
+      				sEmail = ""
+      			End If
+      			If (""=sEmail) Then
+      				'// MailAddress Field
+      				sEmail = uve.ColumnValues(8)
+      				If (False=IsRFC822Email(sEmail)) Then
+      					sEmail = ""
+      				End If
+      			End If
+      		End If
+      		GetRFC822Email = sEmail
+      	End Function
+      	
+      	Function IsRFC822Email(sEmail$) As Integer
+      		Dim bValid%, iCharAt%, iCharDot%
+      	'** Check format ... must be RFC-822
+      		bValid = True
+      		If (True=Isempty(sEmail)) Or (Len(sEmail)<2) Then
+      			bValid = False
+      		Else
+      			iCharAt = Instr(sEmail,"@")
+      			If (iCharAt < 2) Then
+      				bValid = False
+      			Else
+      				iCharDot = Instr(sEmail,".")
+      				If (iCharDot < iCharAt) Then
+      					bValid = False
+      				End If
+      			End If
+      		End If
+      		IsRFC822Email = bValid
+      	End Function
+      	
+      	Function GetUserDatabase( sName$ ) As Variant
+      		Dim nve As NotesViewEntry
+      		Dim ndb As NotesDatabase
+      		Dim sDbPath$
+      		On Error Resume Next
+      		
+      		Set ndb = Nothing
+      		Set nve = Me.GetFirstEntry( sName )
+      		If Not (nve Is Nothing) Then
+      			'// Set mail database info
+      			Set ndb = New NotesDatabase(nve.ColumnValues(5),nve.ColumnValues(6))
+      			If (ndb Is Nothing) Then
+      				Exit Function
+      			End If
+      			If (False=ndb.IsOpen) Then
+      				Call ndb.Open("","")
+      			End If
+      		End If
+      		Set GetUserDatabase = ndb
+      	End Function
+      	
+      	Sub OpenUserViews( ns As NotesSession )
+      		Dim iEntry%
+      		iEntry = Ubound(ns.AddressBooks)
+      		Redim Me.m_nabs(0 To iEntry)
+      		Redim Me.m_views(0 To iEntry)
+      		iEntry = 0
+      		Forall ndb In ns.AddressBooks
+      			Set Me.m_nabs(iEntry) = ndb
+      			If (False=ndb.IsOpen) Then
+      				Call ndb.Open("","")
+      			End If
+      			If (True=ndb.IsOpen) Then
+      				Set Me.m_views(iEntry) = ndb.GetView("$Users")
+      			Else
+      				Set Me.m_views(iEntry) = Nothing
+      			End If
+      			iEntry = 1 + iEntry
+      		End Forall
+      	End Sub
+      End Class
+      
+      '************* ICAL MODULE VARIABLES
+      Public i_NS  As NotesSession
+      Public i_MailDB As NotesDatabase
+      
+      
+      
+      '++LotusScript Development Environment:2:2:iCAL_Session:1:8
+      Sub iCAL_Session ()
+      '================================================
+      	If (i_MailDB Is Nothing) Then 
+      		Set i_NS = New NotesSession
+      		Set i_MailDB = i_NS.CurrentDatabase
+      	End If
+      End Sub
+      '++LotusScript Development Environment:2:2:iCAL_Status:1:8
+      Sub iCAL_Status (stuff$)
+      '================================================
+      	Print "iCAL> " & stuff
+      End Sub
+      '++LotusScript Development Environment:2:1:iCAL_GetFolder:1:8
+      Function iCAL_GetFolder () As String
+      '================================================
+      	Dim tmp$, sep$
+      	iCAL_Session
+      	
+      	sep = "\"
+      	If ("UNIX" = i_NS.Platform) Then sep = "/"
+      	tmp = i_NS.GetEnvironmentString(iCAL_ENV_FOLDER, False)
+      	If (0 = Len(tmp)) Then
+      		tmp = i_NS.GetEnvironmentString("Directory", True)
+      		If Not (sep = Right(tmp, 1)) Then
+      			tmp = tmp & sep
+      		End If
+      		tmp = tmp & "iCalendar"
+      		iCAL_SetFolder tmp
+      	End If
+      	If Not (sep = Right(tmp, 1)) Then
+      		tmp = tmp & sep
+      	End If
+      	
+      	i_NS.SetEnvironmentVar "FileDlgDirectory", tmp, True   
+      	iCAL_GetFolder = tmp
+      End Function
+      '++LotusScript Development Environment:2:2:iCAL_SetFolder:1:8
+      Sub iCAL_SetFolder (WorkDir$)
+      '================================================
+      	Dim i_NS As New NotesSession
+      	
+         ' Make the dir if need be.
+      	iCAL_MakeDir WorkDir
+      	
+         ' Set the ENV
+      	i_NS.SetEnvironmentVar iCAL_ENV_FOLDER, WorkDir, False
+      End Sub
+      '++LotusScript Development Environment:2:2:iCAL_MakeDir:1:8
+      Sub iCAL_MakeDir (strDir$)
+      '================================================
+      	Dim thisS%, prevS%
+      	Dim sep$
+      	On Error Resume Next
+      	
+      	sep = "\"
+      	If ("UNIX" = i_NS.Platform) Then sep = "/"
+      	
+      	If (0 = Len(Dir$(strDir,16))) Then 
+      		
+            ' skip the first slash, (i.e. c:\subdir\subdir\subdir\...)
+            '   then make the subdirs one at a time.
+      		thisS = 3
+      		Do While (thisS>0)
+      			prevS = thisS + 1
+      			thisS = Instr( prevS, strDir, sep, 0 )
+      			If (thisS>0) Then
+      				Mkdir Left(strDir, thisS - 1)
+      			End If
+      		Loop
+      		
+            ' finally, ensure that the entire dir has been created
+      		Mkdir strDir
+      	End If
+      End Sub
+      '++LotusScript Development Environment:2:1:iCAL_AutoCreate:1:8
+      Function iCAL_AutoCreate () As Integer
+      '================================================
+      	iCAL_Session
+      	If (0 = i_NS.GetEnvironmentValue(iCAL_ENV_AUTO, False)) Then 
+      		iCAL_AutoCreate = True
+      	Else
+      		iCAL_AutoCreate = False
+      	End If
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_NoSpace:1:8
+      Function iCAL_NoSpace (Email$) As String
+      '================================================
+      	Dim i%
+      	i = Instr(1, Email, " ", 0)
+      	Do While (i>0)
+      		Mid$(Email, i, 1) = "_"
+      		i = Instr(i+1, Email, " ", 0)
+      	Loop
+      	iCAL_NoSpace = Email
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_ReplaceChr:1:8
+      Function iCAL_ReplaceChr (Txt$, FindChr$, ReplChr$) As String
+      '================================================
+      	Dim i%
+      	If (0 = Len(Txt))     Then Exit Function
+      	If (0 = Len(FindChr)) Then Exit Function
+      	If (0 = Len(ReplChr)) Then Exit Function
+      	
+      	i = Instr(1, Txt, FindChr, 0)
+      	Do While (i>0)
+      		Mid$(Txt, i, 1) = ReplChr
+      		i = Instr(i+1, Txt, FindChr, 0)
+      	Loop
+      	iCAL_ReplaceChr = Txt
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_DateToZString:1:8
+      Function iCAL_DateToZString (LNDate As Variant) As String
+      '================================================
+      	Dim Tmp$
+      	Dim dtZ As Variant
+      	Dim LNDateTime As New NotesDateTime(Now)
+      	On Error Resume Next
+      	
+      	'Build TempString   YEAR:MONTH:DAY:HOUR:MINUTE:SECOND
+      	If Not (0 = LNDate) Then
+      		Set LNDateTime = New NotesDateTime(LNDate)
+      	End If
+      	
+      	dtZ = LNDateTime.LSGMTTime
+      	
+      	'YEAR
+      	Tmp$ = Cstr(Year(dtZ))
+      	'MONTH
+      	Tmp = Tmp & iCAL_Digits(2, Month(dtZ))
+      	'DAY
+      	Tmp = Tmp & iCAL_Digits(2, Day(dtZ))
+      	'HOUR
+      	Tmp = Tmp & "T" & iCAL_Digits(2, Hour(dtZ))
+      	'MINUTE
+      	Tmp = Tmp & iCAL_Digits(2, Minute(dtZ)) & "00Z"
+      	
+      	iCAL_DateToZString = Tmp
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_Digits:1:8
+      Function iCAL_Digits (Qty%, Txt As Variant) As String
+      '================================================
+         '  Fill buffer with Zeros
+         '  prepend to Text
+         '  then chop off what's not needed.
+         '  i.e. Qty=2, Text=3, result="03"
+      	Dim Buff$
+      	Buff = String$(Qty, 48)
+      	iCAL_Digits = Right(Buff & Val(Txt), Qty)
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_NameOnly:1:8
+      Function iCAL_NameOnly (Txt$) As String
+      '================================================
+      	Dim p%
+      	Dim cn$
+      	cn = Txt
+      	
+      	cn = iCAL_ReplaceChr(cn, "<", "@")
+      	p  = Instr(1, cn, "@", 0)
+      	If (p > 0) Then
+      		cn = Left(cn, p - 1)
+      		cn = iCAL_ReplaceChr(cn, "_", " ")
+      		cn = iCAL_ReplaceChr(cn, ".", " ")
+      		
+            '--- Remove Quotes
+      		cn = Trim(cn)
+      		If (Chr$(34) = Left(cn, 1)) Then
+      			cn = Mid(cn, 2)
+      		End If
+      		If (Chr$(34) = Right(cn, 1)) Then
+      			cn = Left(cn, Len(cn) - 1)
+      		End If
+      		
+            '--- Proper Case
+      		Mid(cn, 1, 1) = Ucase(Left(cn, 1))
+      		p = Instr(1, cn, " ", 0)
+      		Do While (p > 0) 
+      			Mid(cn, p + 1, 1) = Ucase(Mid(cn, p + 1, 1))
+      			p = Instr(p + 1, cn, " ", 0)
+      		Loop
+      	End If
+      	
+      	iCAL_NameOnly = Trim(cn)
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_FileHasValidExt:1:8
+      Function iCAL_FileHasValidExt(ObjSource As Variant) As Integer
+      '================================================
+      '  Checks for ICS, LCS, and VCS extensions
+      	
+      	Dim HasValidExt%
+      	Dim fExt$
+      	
+      	HasValidExt = False
+      	fExt = Ucase(Right(Cstr(ObjSource), 3))
+      	
+         '--- Does Ext Meet Criteria?
+      	Select Case fExt
+      	Case "ICS", "VCS", "LCS"
+      		HasValidExt = True
+      	End Select
+      	
+      	iCAL_FileHasValidExt = HasValidExt
+      End Function
+      '++LotusScript Development Environment:2:2:iCAL_DumpItemInfo:1:8
+      Sub iCAL_DumpItemInfo (thisNote As NotesDocument)
+      '================================================
+      	Dim DUMP%
+      	Dim info$
+      	On Error Resume Next
+      	DUMP = Freefile
+      	Open "c:\iCalDump.txt" For Output As #DUMP
+      	Print #DUMP, "--- Dump of Doc Fields ---"
+      	Print #DUMP, ""
+      	Print #DUMP, "->NoteUNID            " & Chr$(9) & Cstr(0) & Chr$(9) & "[" & thisNote.UniversalID & "]"
+      	info = thisNote.ParentDocumentID
+      	Print #DUMP, "->ParentNoteUNID      " & Chr$(9) & Cstr(0) & Chr$(9) & "[" & info & "]"
+      	Print #DUMP, ""
+      	Forall LNItem In thisNote.Items
+      		Print #DUMP, "->" & Left(LNItem.Name & String(20,32), 20) & Chr$(9) & LNItem.Type & Chr$(9) & "[" & LNItem.Text & "]"
+      	End Forall
+      	Close #DUMP
+      End Sub
+      '++LotusScript Development Environment:2:1:iCAL_Addr821:1:8
+      Function iCAL_Addr821 (email$) As String
+      '================================================
+      '  returns the email address stripped of
+      '  "MAILTO:" and any display name
+      	
+      	Dim mt%
+      	
+      	mt = Instr(1, Ucase(email), "MAILTO:", 0)
+      	If (mt > 0) Then
+      		email = Mid(email, mt + 7)
+      	End If
+      	mt = Instr(1, email, "<", 0)
+      	If (mt > 0) Then
+      		email = Mid(email, mt + 1)
+      	End If
+      	mt = Instr(1, email, ">", 0)
+      	If (mt > 0) Then
+      		email = Left(email, mt - 1)
+      	End If
+      	
+      	iCAL_Addr821 = Lcase(Trim(email))
+      End Function
+      '++LotusScript Development Environment:2:1:iCAL_ExplodeList:1:8
+      Function iCAL_ExplodeList (listText$) As Variant
+      '================================================
+      '  explodes a list of text into an array
+      	Dim newList() As String
+      	Dim txt$
+      	Dim semi%, elements%, i%
+      	
+      	If (Len(listText) = 0) Then Exit Function
+      	
+         '--- Count the elements
+      	txt = listText & ";"
+      	elements = 0
+      	semi = Instr(1, txt, ";", 0)
+      	Do While semi > 0
+      		elements = elements + 1
+      		semi = Instr(semi + 1, txt, ";", 0)
+      	Loop
+      	
+         '--- Put them in an array
+      	Redim newList (1 To elements)
+      	For i = 1 To elements
+      		semi = Instr(1, txt, ";", 0)
+      		newList(i) = Left(txt, semi - 1)
+      		txt = Mid(txt, semi + 1)
+      	Next i
+      	
+      	iCAL_ExplodeList = newList
+      End Function
+      '++LotusScript Development Environment:2:1:Instrr:1:8
+      Function Instrr (txt$, searchChr$) As Integer
+      '================================================
+      '  Returns the last occurance of a string or character
+      	Dim pos%, i%
+      	For i = Len(txt) To 1 Step -1
+      		pos = Instr(i, txt, searchChr, 0)
+      		If (pos > 0) Then Exit For
+      	Next i
+      	Instrr = pos
+      End Function
+    signed: true
+    nonsummary: true
+  - name: $TITLE
+    type: text
+    data: iCalendarCommon
+    signed: true
+remaining: []

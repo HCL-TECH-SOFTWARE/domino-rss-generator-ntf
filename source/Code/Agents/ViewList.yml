@@ -1,0 +1,182 @@
+---
+class: 512
+flags: 0x0000
+unid: OF234798A585158D9D-ON006B05B285257123
+items:
+  - name: $AssistAction
+    type: action
+    code_type: 65413
+    data: |
+      '++LotusScript Development Environment:2:5:(Options):0:74
+      Option Public
+      Option Explicit
+      '// This agent is designed to run on the server to speed delivery of the design collection
+      
+      '++LotusScript Development Environment:2:5:(Forward):0:1
+      Declare Sub Initialize
+      Declare Sub BuildList( ns As NotesSession, thisDb As NotesDatabase, refDoc As NotesDocument )
+      
+      '++LotusScript Development Environment:2:5:(Declarations):0:10
+      Const kFieldDbPath$ = "DbPath"
+      Const kFieldDbTitle$ = "DbTitle"
+      Const kFieldViews$ = "ViewArray"
+      
+      '++LotusScript Development Environment:2:2:Initialize:1:10
+      Sub Initialize
+      	Dim ns As New NotesSession
+      	Dim db As NotesDatabase
+      	Dim doc As NotesDocument
+      	
+        	'// Get document used for passing data
+      	Set db = ns.CurrentDatabase
+      	Set doc = db.GetDocumentByID(ns.CurrentAgent.ParameterDocID)
+      	
+      	'// Build the view collection
+      	Call BuildList( ns, db, doc )
+      	Call doc.Save(True, False)
+      End Sub
+      '++LotusScript Development Environment:2:2:BuildList:1:8
+      Sub BuildList( ns As NotesSession, thisDb As NotesDatabase, refDoc As NotesDocument )
+      	Dim db As NotesDatabase
+      	Dim dd As NotesDocument
+      	Dim nc As NotesNoteCollection
+      	Dim nn As New NotesName(thisDb.Server)
+      	Dim sNoteID$, sFlags$, sServer$
+      	Dim n%, nView%
+      	Dim vView() As String
+      	
+      	On Error Resume Next
+      	
+      	'// open the database
+      	If (False=ns.IsOnServer) Then
+      		sServer = nn.Abbreviated
+      	End If
+      	Set db = New NotesDatabase(sServer,refDoc.GetItemValue(kFieldDbPath)(0))
+      	If (False=db.IsOpen) Then
+      		Call db.Open("","")
+      	End If
+      	If (db Is Nothing) Or (False=db.IsOpen) Then
+      		Exit Sub
+      	End If
+      	
+      	'// set the db title while the db is open
+      	Call refDoc.ReplaceItemValue(kFieldDbTitle, db.Title & ": ")
+      	
+      	'// build the view collection
+      	Set nc = db.CreateNoteCollection(False)
+      	Call nc.SelectAllDesignElements(False)
+      	nc.SelectViews = True
+      	nc.SelectFolders = True
+      	
+      	Call nc.BuildCollection	
+      	Redim vView(1 To nc.Count)
+      	sNoteID = nc.GetFirstNoteId
+      	nView = 1
+      	For n=1 To nc.Count
+      		Set dd = db.GetDocumentByID( sNoteID )
+      		If Not (dd Is Nothing) And (dd.HasItem("$Title")) And (dd.HasItem("$Flags")) Then
+      				'// check the DESIGN_FLAGS
+      				'	"o" == DESIGN_FLAG_PRIVATE_STOREDESK
+      				'	"p" == DESIGN_FLAG_PRIVATE_1STUSE
+      				'	"V" == DESIGN_FLAG_PRIVATE_IN_DB
+      				'	"w" == DESIGN_FLAG_HIDE_FROM_WEB
+      			sFlags = dd.GetItemValue("$Flags")(0)
+      			If (0=Instr(sFlags, "w")) And (0=Instr(sFlags, "o")) And (0=Instr(sFlags, "p")) And (0=Instr(sFlags, "V")) Then
+      				vView(nView) = dd.GetItemValue("$Title")(0)
+      				nView = 1 + nView
+      			End If
+      		End If
+      		Yield
+      		sNoteID = nc.GetNextNoteId(sNoteID)
+      	Next
+      	Call nc.ClearCollection
+      	Call refDoc.ReplaceItemValue(kFieldViews, vView)
+      End Sub
+    dwFlags: 0x00000000
+    signed: true
+    nonsummary: true
+  - name: $AssistDocCount
+    type: number
+    data: 0
+    signed: true
+  - name: $AssistFlags
+    type: text
+    data: Es
+    signed: true
+  - name: $AssistInfo
+    type_num: 17
+    type: opaque
+    opaque: |
+      AQABAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistLastRun
+    type: time
+    signed: true
+  - name: $AssistQuery
+    type_num: 15
+    type: opaque
+    opaque: gQYAAAAA
+    signed: true
+    nonsummary: true
+  - name: $AssistRunInfo
+    type: object
+    obj_type: 0x0008
+    obj_class: 0x0200
+    obj_privs: 0x0000
+    opaque: |
+      AAAAAAUAAAAwAAAAAAAAAAAAAAAAAAAA7QAAAAAAAAAAAAAAAAAAABAAAAAAAAAAiXpvAO1xJYUAAAAA
+      mwtRAOpxJYVpxWAAuXElhQAAAAAAAAAAAAAAAAAAAAAAAAAAU3RhcnRlZCBydW5uaW5nIGFnZW50ICdW
+      aWV3TGlzdCcgb24gMDkvMTgvMjAwNiAwNDoxNzozNSBQTQ0KUnVubmluZyBvbiBuZXcgb3IgbW9kaWZp
+      ZWQgZG9jdW1lbnRzOiAxIHRvdGFsDQpGb3VuZCAxIGRvY3VtZW50KHMpIHRoYXQgbWF0Y2ggc2VhcmNo
+      IGNyaXRlcmlhDQpSYW4gTG90dXNTY3JpcHQgY29kZQ0KRG9uZSBydW5uaW5nIGFnZW50ICdWaWV3TGlz
+      dCcgb24gMDkvMTgvMjAwNiAwNDoxNzozOCBQTQ0KAA0Ks7KTNT8AiIDr3WsAXXElhaqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+      qqqqqqqqqqqqqqqq
+  - name: $AssistTrigger
+    type: text
+    data: "1"
+    signed: true
+  - name: $AssistType
+    type: number
+    data: 65413
+    signed: true
+  - name: $DesignerVersion
+    type: text
+    data: "6.5"
+    signed: true
+  - name: $Flags
+    type: text
+    data: SfL3
+  - name: $FlagsExt
+    type: text
+    data: ""
+    signed: true
+  - name: $LANGUAGE
+    type: text
+    data: en
+    signed: true
+  - name: $MachineName
+    type: text
+    data: CN=Storm/O=IBM/C=US
+    signed: true
+  - name: $Restricted
+    type: number
+    data: 1
+    signed: true
+  - name: $TITLE
+    type: text
+    data: ViewList
+    signed: true
+remaining: []
